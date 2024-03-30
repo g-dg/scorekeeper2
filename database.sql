@@ -1,0 +1,14 @@
+CREATE TABLE IF NOT EXISTS "users" (
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    "username" TEXT NOT NULL UNIQUE,
+    "password" TEXT,
+    "role" TEXT NOT NULL,
+    "enabled" INTEGER NOT NULL DEFAULT 1
+);
+CREATE TABLE IF NOT EXISTS "sessions" (
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    "session_id" TEXT NOT NULL UNIQUE,
+    "user_id" INTEGER NOT NULL REFERENCES "users" ("id"),
+    "timestamp" TEXT NOT NULL,
+    "valid" INTEGER NOT NULL DEFAULT 1
+);

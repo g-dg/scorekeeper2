@@ -1,0 +1,24 @@
+[package]
+name = "scoretracker"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+argon2 = "0.5"
+axum = { version = "0.7", features = ["ws"] }
+axum-extra = { version = "0.9", features = ["typed-header"] }
+chrono = { version = "0.4", features = ["serde"] }
+r2d2 = "0.8"
+r2d2_sqlite = "0.24"
+rand = "0.8"
+rusqlite = { version = "0.31", features = ["bundled", "functions", "backup", "vtab", "array", "csvtab", "i128_blob", "serialize", "chrono", "serde_json", "uuid"] }
+rust_decimal = "1.35"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tokio = { version = "1.37", features = ["full"] }
+tokio-stream = "0.1"
+tower = { version = "0.4", features = ["full"] }
+tower-http = { version = "0.5", features = ["full"] }
+uuid = { version = "1.8", features = ["v4", "fast-rng", "serde"] }
