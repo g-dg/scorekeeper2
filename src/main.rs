@@ -1,9 +1,10 @@
+pub mod api;
 pub mod database;
+pub mod services;
 
 use std::{net::SocketAddr, path::Path, sync::Arc};
 
-use auth::Auth;
-use axum::{routing::get, Router};
+use axum::Router;
 use tokio::{net::TcpListener, signal};
 use tower::ServiceBuilder;
 use tower_http::{
@@ -13,14 +14,15 @@ use tower_http::{
 };
 
 use database::Database;
+use services::auth::Auth;
 
 const STATIC_FILE_ROOT: &str = "./client/dist/";
 const STATIC_FILE_INDEX: &str = "index.html";
 const DATABASE_FILE: &str = "./database.sqlite3";
 
 pub struct AppState {
-    database: Database,
-    auth: Auth,
+    pub database: Database,
+    pub auth: Auth,
 }
 
 #[tokio::main]
@@ -39,7 +41,7 @@ pub async fn main() {
             "/*path",
             ServeDir::new(STATIC_FILE_ROOT).fallback(ServeFile::new(&static_file_index)),
         )
-        .route("/api", get(|| async { "api" }))
+        .nest("/api", api::route())
         .layer(
             ServiceBuilder::new()
                 .layer(CatchPanicLayer::new())

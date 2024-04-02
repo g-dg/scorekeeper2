@@ -1,4 +1,4 @@
-/target
+/target/
 
 /database.sqlite3
 /database.sqlite3-journal
@@ -6,3 +6,5 @@
 /database.sqlite3-shm
 
 /Cargo.lock
+
+/certs/
