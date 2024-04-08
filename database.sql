@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS "sessions" (
     "id" BLOB PRIMARY KEY NOT NULL DEFAULT (randomblob(16)),
     "token" TEXT NOT NULL UNIQUE,
     "user_id" BLOB NOT NULL REFERENCES "users" ("id"),
-    "timestamp" TEXT NOT NULL,
+    "timestamp" TEXT NOT NULL DEFAULT (strftime('%s')),
     "valid" INTEGER NOT NULL DEFAULT 1
 );
 
@@ -82,7 +82,7 @@ CREATE TABLE IF NOT EXISTS "group_scores" (
     "season_competition_event_id" BLOB NOT NULL REFERENCES "season_competition_events" ("id"),
     "group_id" BLOB NOT NULL REFERENCES "groups" ("id"),
     "score_data" TEXT NOT NULL,
-    "timestamp" TEXT NOT NULL,
+    "timestamp" TEXT NOT NULL DEFAULT (strftime('%s')),
     "valid" INTEGER NOT NULL DEFAULT 1,
     "disqualified" INTEGER NOT NULL DEFAULT 0
 );
@@ -92,9 +92,18 @@ CREATE TABLE IF NOT EXISTS "team_scores" (
     "season_competition_event_id" BLOB NOT NULL REFERENCES "season_competition_events" ("id"),
     "team_id" BLOB NOT NULL REFERENCES "teams" ("id"),
     "score_data" TEXT NOT NULL,
-    "timestamp" TEXT NOT NULL,
+    "timestamp" TEXT NOT NULL DEFAULT (strftime('%s')),
     "valid" INTEGER NOT NULL DEFAULT 1,
     "disqualified" INTEGER NOT NULL DEFAULT 0
+);
+
+
+CREATE TABLE IF NOT EXISTS "audit" (
+    "id" BLOB PRIMARY KEY NOT NULL DEFAULT (randomblob(16)),
+    "user_id" BLOB REFERENCES "users" ("id"),
+    "timestamp" TEXT NOT NULL DEFAULT (strftime('%s')),
+    "action" TEXT NOT NULL,
+    "data" TEXT
 );
 
 COMMIT;

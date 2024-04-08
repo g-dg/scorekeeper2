@@ -39,6 +39,7 @@ impl Database {
             "season_competition_events",
             "group_scores",
             "team_scores",
+            "audit",
         ];
         let table_sql = format!("('{}')", tables.join("', '"));
 
