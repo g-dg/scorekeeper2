@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-use crate::database::auth::{DbUser, UserPermission};
+use crate::database::{auth::{DbUser, UserPermission}, Database};
 
 #[derive(Serialize, Deserialize)]
 pub struct User {
@@ -9,7 +9,8 @@ pub struct User {
     username: String,
     new_password: Option<String>,
     enabled: bool,
-    permission_administration: bool,
+    permission_user_admin: bool,
+    permission_data_admin: bool,
     permission_view_results: bool,
     permission_view_scores: bool,
     permission_enter_scores: bool,
@@ -23,7 +24,8 @@ impl User {
             username: user.username.clone(),
             new_password: None,
             enabled: user.enabled,
-            permission_administration: user.permissions & UserPermission::ADMINISTRATION != 0,
+            permission_user_admin: user.permissions & UserPermission::USER_ADMIN != 0,
+            permission_data_admin: user.permissions & UserPermission::DATA_ADMIN != 0,
             permission_view_results: user.permissions & UserPermission::RESULTS_VIEW != 0,
             permission_view_scores: user.permissions & UserPermission::SCORE_VIEW != 0,
             permission_enter_scores: user.permissions & UserPermission::SCORE_ENTRY != 0,
@@ -33,3 +35,16 @@ impl User {
         }
     }
 }
+
+pub struct UserService {
+    db: Database,
+}
+
+impl UserService {
+    pub fn new(database: Database) -> Self {
+        Self { db: database }
+    }
+
+    
+}
+

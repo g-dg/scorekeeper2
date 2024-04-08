@@ -4,7 +4,7 @@ use axum::{extract::State, http::StatusCode, response::IntoResponse, routing::ge
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    api::users::User, database::auth::UserPermission, services::auth::AuthToken, AppState,
+    services::users::User, database::auth::UserPermission, services::auth::AuthToken, AppState,
 };
 
 pub fn route() -> Router<Arc<AppState>> {

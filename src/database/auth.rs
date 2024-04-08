@@ -6,12 +6,13 @@ use uuid::Uuid;
 pub struct UserPermission {}
 impl UserPermission {
     pub const NONE: i64 = 0;
-    pub const ADMINISTRATION: i64 = 1;
-    pub const RESULTS_VIEW: i64 = 2;
-    pub const SCORE_VIEW: i64 = 4;
-    pub const SCORE_ENTRY: i64 = 8;
-    pub const REGISTRATION_VIEW: i64 = 16;
-    pub const REGISTRATION_ENTRY: i64 = 32;
+    pub const USER_ADMIN: i64 = 1;
+    pub const DATA_ADMIN: i64 = 2;
+    pub const RESULTS_VIEW: i64 = 4;
+    pub const SCORE_VIEW: i64 = 8;
+    pub const SCORE_ENTRY: i64 = 16;
+    pub const REGISTRATION_VIEW: i64 = 32;
+    pub const REGISTRATION_ENTRY: i64 = 64;
 }
 
 #[derive(Serialize, Deserialize)]
