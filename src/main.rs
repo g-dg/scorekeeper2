@@ -4,12 +4,16 @@ pub mod services;
 
 use std::{net::SocketAddr, path::Path, sync::Arc};
 
-use axum::Router;
+use axum::{
+    http::{header, Method},
+    Router,
+};
 use tokio::{net::TcpListener, signal};
 use tower::ServiceBuilder;
 use tower_http::{
     catch_panic::CatchPanicLayer,
     compression::CompressionLayer,
+    cors::CorsLayer,
     services::{ServeDir, ServeFile},
 };
 
@@ -19,6 +23,8 @@ use services::auth::Auth;
 const STATIC_FILE_ROOT: &str = "./client/dist/";
 const STATIC_FILE_INDEX: &str = "index.html";
 const DATABASE_FILE: &str = "./database.sqlite3";
+
+const CORS_ALLOWED_ORIGINS: &[&str] = &["http://localhost:5173", "http://127.0.0.1:5173"];
 
 pub struct AppState {
     pub database: Database,
@@ -35,6 +41,11 @@ pub async fn main() {
 
     let static_file_index = Path::new(STATIC_FILE_ROOT).join(STATIC_FILE_INDEX);
 
+    let cors_origins: Vec<_> = CORS_ALLOWED_ORIGINS
+        .iter()
+        .map(|x| x.parse().unwrap())
+        .collect();
+
     let app = Router::new()
         .route_service("/", ServeFile::new(&static_file_index))
         .route_service(
@@ -45,7 +56,14 @@ pub async fn main() {
         .layer(
             ServiceBuilder::new()
                 .layer(CatchPanicLayer::new())
-                .layer(CompressionLayer::new()),
+                .layer(CompressionLayer::new())
+                .layer(
+                    CorsLayer::new()
+                        .allow_origin(cors_origins)
+                        .allow_credentials(true)
+                        .allow_headers([header::AUTHORIZATION, header::CONTENT_TYPE])
+                        .allow_methods([Method::GET, Method::POST, Method::PUT, Method::DELETE]),
+                ),
         )
         .with_state(app_state.clone());
 
