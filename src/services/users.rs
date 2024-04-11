@@ -202,7 +202,7 @@ impl UsersService {
 
         let db = self.db.get();
         let success = db
-            .prepare_cached("UPDATE \"users\" SET \"password\" = :password, WHERE \"id\" = :id;")
+            .prepare_cached("UPDATE \"users\" SET \"password\" = :password WHERE \"id\" = :id;")
             .expect("Error preparing user update statement")
             .execute(named_params! {
                 ":id": user_id,
