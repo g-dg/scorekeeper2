@@ -10,6 +10,7 @@ argon2 = "0.5"
 axum = { version = "0.7", features = ["ws"] }
 axum-extra = { version = "0.9", features = ["typed-header"] }
 chrono = { version = "0.4", features = ["serde"] }
+mlua = { version = "0.9", features = ["lua54", "vendored"] }
 r2d2 = "0.8"
 r2d2_sqlite = "0.24"
 rand = "0.8"
