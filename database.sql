@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS "users" (
 CREATE TABLE IF NOT EXISTS "sessions" (
     "id" BLOB PRIMARY KEY NOT NULL DEFAULT (randomblob(16)),
     "token" TEXT NOT NULL UNIQUE,
-    "user_id" BLOB NOT NULL REFERENCES "users" ("id"),
+    "user_id" BLOB NOT NULL,
     "timestamp" TEXT NOT NULL DEFAULT (strftime('%s')),
     "valid" INTEGER NOT NULL DEFAULT 1
 );
