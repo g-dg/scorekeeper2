@@ -33,7 +33,7 @@ impl Database {
 
         let db = Self { pool };
 
-        let tables = [
+        let tables: &[&str] = &[
             "users",
             "sessions",
             "seasons",
@@ -42,6 +42,7 @@ impl Database {
             "competitions",
             "season_competitions",
             "teams",
+            "score_calculators",
             "events",
             "season_competition_events",
             "group_scores",

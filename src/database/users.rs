@@ -26,7 +26,7 @@ pub struct DbUser {
 }
 impl DbUser {
     pub const COLUMNS_SQL: &'static str =
-        "\"id\", \"username\", \"password\", \"permissions\", \"enabled\"";
+        "\"id\", \"username\", \"password\", \"enabled\", \"permissions\"";
 
     pub fn from_row(row: &Row) -> Self {
         Self {
@@ -39,11 +39,11 @@ impl DbUser {
             password: row
                 .get("password")
                 .expect("Failed to get value from database row"),
-            permissions: row
-                .get("permissions")
-                .expect("Failed to get value from database row"),
             enabled: row
                 .get("enabled")
+                .expect("Failed to get value from database row"),
+            permissions: row
+                .get("permissions")
                 .expect("Failed to get value from database row"),
         }
     }
