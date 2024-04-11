@@ -1,8 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
-import HomeView from "@/views/HomeView.vue";
-import LoginView from "@/views/LoginView.vue";
 import { useAuthStore } from "@/stores/auth";
-import LogoutView from "@/views/LogoutView.vue";
 
 const login_route = { name: "login" };
 
@@ -12,19 +9,24 @@ const router = createRouter({
     {
       name: "home",
       path: "/",
-      component: HomeView,
+      component: () => import("@/views/HomeView.vue"),
     },
     {
       name: "login",
       path: "/login",
-      component: LoginView,
+      component: () => import("@/views/LoginView.vue"),
       meta: { requiresAuth: false },
     },
     {
       name: "logout",
       path: "/logout",
-      component: LogoutView,
+      component: () => import("@/views/LogoutView.vue"),
       meta: { requiresAuth: false },
+    },
+    {
+      name: "user_admin",
+      path: "/users",
+      component: () => import("@/views/UserAdmin.vue"),
     },
   ],
 });

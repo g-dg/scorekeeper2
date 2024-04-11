@@ -6,6 +6,7 @@ import { computed } from "vue";
 const authStore = useAuthStore();
 
 const isAuthenticated = computed(() => authStore.isAuthenticated);
+const user = computed(() => authStore.user);
 </script>
 
 <template>
@@ -13,10 +14,13 @@ const isAuthenticated = computed(() => authStore.isAuthenticated);
     <nav v-if="isAuthenticated">
       <ul>
         <li>
-          <RouterLink :to='{ name: "home" }'>Home</RouterLink>
+          <RouterLink :to="{ name: 'home' }">Home</RouterLink>
+        </li>
+        <li v-if="user?.permission_user_admin">
+          <RouterLink :to="{ name: 'user_admin' }">Users</RouterLink>
         </li>
         <li>
-          <RouterLink :to='{ name: "logout" }'>Logout</RouterLink>
+          <RouterLink :to="{ name: 'logout' }">Logout</RouterLink>
         </li>
       </ul>
     </nav>
