@@ -42,6 +42,11 @@ export async function api(endpoint: string, method: "GET" | "POST" | "PUT" | "DE
   }
 
   if (response.ok) {
+    // if response is "No Content", return nothing
+    if (response.status == 204) {
+      return null;
+    }
+
     // if response is ok, return the requested type
     switch (options?.returnType ?? "json") {
       case "json":
