@@ -1,13 +1,15 @@
 pub mod api;
 pub mod database;
+pub mod helpers;
 pub mod services;
 
 use std::{net::SocketAddr, path::Path, sync::Arc};
 
 use axum::{
     http::{header, Method},
-    Router,
+    middleware, Router,
 };
+use helpers::api_request_logging;
 use tokio::{net::TcpListener, signal};
 use tower::ServiceBuilder;
 use tower_http::{
@@ -18,24 +20,29 @@ use tower_http::{
 };
 
 use database::Database;
-use services::auth::Auth;
+use services::{audit::AuditService, auth::AuthService, users::UsersService};
 
 const STATIC_FILE_ROOT: &str = "./client/dist/";
 const STATIC_FILE_INDEX: &str = "index.html";
 const DATABASE_FILE: &str = "./database.sqlite3";
+const ENABLE_API_REQUEST_LOGGING: bool = true;
 
 const CORS_ALLOWED_ORIGINS: &[&str] = &["http://localhost:5173", "http://127.0.0.1:5173"];
 
 pub struct AppState {
     pub database: Database,
-    pub auth: Auth,
+    pub audit_service: AuditService,
+    pub auth_service: AuthService,
+    pub users_service: UsersService,
 }
 
 #[tokio::main]
 pub async fn main() {
     let database = Database::new(DATABASE_FILE);
     let app_state = Arc::new(AppState {
-        auth: Auth::new(database.clone()),
+        audit_service: AuditService::new(database.clone()),
+        auth_service: AuthService::new(database.clone()),
+        users_service: UsersService::new(database.clone()),
         database,
     });
 
@@ -52,28 +59,48 @@ pub async fn main() {
             "/*path",
             ServeDir::new(STATIC_FILE_ROOT).fallback(ServeFile::new(&static_file_index)),
         )
-        .nest("/api", api::route())
+        .nest(
+            "/api",
+            if ENABLE_API_REQUEST_LOGGING {
+                api::route().layer(middleware::from_fn_with_state(
+                    app_state.clone(),
+                    api_request_logging::request_logging,
+                ))
+            } else {
+                api::route()
+            },
+        )
         .layer(
             ServiceBuilder::new()
-                .layer(CatchPanicLayer::new())
-                .layer(CompressionLayer::new())
                 .layer(
                     CorsLayer::new()
                         .allow_origin(cors_origins)
                         .allow_credentials(true)
                         .allow_headers([header::AUTHORIZATION, header::CONTENT_TYPE])
-                        .allow_methods([Method::GET, Method::POST, Method::PUT, Method::DELETE]),
-                ),
+                        .allow_methods([
+                            Method::GET,
+                            Method::POST,
+                            Method::PUT,
+                            Method::PATCH,
+                            Method::DELETE,
+                        ]),
+                )
+                .layer(CatchPanicLayer::new())
+                .layer(CompressionLayer::new()),
         )
         .with_state(app_state.clone());
 
     let address = SocketAddr::from(([0, 0, 0, 0], 8080));
     let listener = TcpListener::bind(address).await.unwrap();
 
+    app_state.audit_service.log(None, "startup");
+
     axum::serve(listener, app)
         .with_graceful_shutdown(shutdown_signal())
         .await
         .unwrap();
+
+    app_state.audit_service.log(None, "shutdown");
 }
 
 async fn shutdown_signal() {

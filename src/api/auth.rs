@@ -1,14 +1,24 @@
 use std::sync::Arc;
 
-use axum::{extract::State, http::StatusCode, response::IntoResponse, routing::get, Json, Router};
+use axum::{
+    extract::State,
+    http::StatusCode,
+    response::IntoResponse,
+    routing::{delete, get, post},
+    Json, Router,
+};
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    services::users::User, database::auth::UserPermission, services::auth::AuthToken, AppState,
+    database::users::UserPermission, helpers::auth_extractor::AuthToken, services::users::User,
+    AppState,
 };
 
 pub fn route() -> Router<Arc<AppState>> {
-    Router::new().route("/", get(get_current_user).post(login).delete(logout))
+    Router::new()
+        .route("/", get(get_current_user))
+        .route("/", post(login))
+        .route("/", delete(logout))
 }
 
 #[derive(Serialize, Deserialize)]
@@ -29,11 +39,11 @@ pub async fn login(
     Json(request): Json<LoginRequest>,
 ) -> impl IntoResponse {
     let result = state
-        .auth
+        .auth_service
         .authenticate(&request.username, &request.password);
 
     if let Some(token) = result {
-        let Some(user) = state.auth.authorize(&token, UserPermission::NONE) else {
+        let Some(user) = state.auth_service.authorize(&token, UserPermission::NONE) else {
             return AuthToken::failure_response();
         };
 
@@ -52,16 +62,16 @@ pub async fn get_current_user(
     State(state): State<Arc<AppState>>,
     token: AuthToken,
 ) -> impl IntoResponse {
-    let Some(user) = token.authorize(&state, UserPermission::NONE) else {
+    let Some(current_user) = token.authorize(&state, UserPermission::NONE) else {
         return AuthToken::failure_response();
     };
 
-    Json(User::from_db_user(&user)).into_response()
+    Json(User::from_db_user(&current_user)).into_response()
 }
 
 /// Invalidates an api key
 pub async fn logout(State(state): State<Arc<AppState>>, token: AuthToken) -> impl IntoResponse {
     token.logout(&state);
 
-    StatusCode::OK.into_response()
+    StatusCode::NO_CONTENT.into_response()
 }

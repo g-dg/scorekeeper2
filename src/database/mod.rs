@@ -1,10 +1,15 @@
-pub mod auth;
+pub mod users;
 
 use r2d2::{Pool, PooledConnection};
 use r2d2_sqlite::SqliteConnectionManager;
-use rusqlite::named_params;
+use serde_json::json;
 
-use crate::services::auth::Auth;
+use crate::services::{
+    audit::AuditService,
+    users::{User, UsersService},
+};
+
+use self::users::UserPermission;
 
 const DATABASE_DEFINITION_SQL: &str = include_str!("../../database.sql");
 const DEFAULT_ADMIN_USER_NAME: &str = "admin";
@@ -25,6 +30,8 @@ impl Database {
         let conn = pool
             .get()
             .expect("Error occurred getting database connection for initialization");
+
+        let db = Self { pool };
 
         let tables = [
             "users",
@@ -56,20 +63,34 @@ impl Database {
             conn.execute_batch(DATABASE_DEFINITION_SQL)
                 .expect("Error occurred while running database initialization commands");
 
-            // seed default administrator
-            let password_hash = Auth::hash_password(DEFAULT_ADMIN_USER_PASSWORD);
+            let audit_service = AuditService::new(db.clone());
 
-            conn.prepare_cached("INSERT INTO \"users\" (\"username\", \"password\", \"enabled\", \"permissions\") VALUES (:username, :password, 1, :permissions);")
-                .expect("Error occurred while preparing default admin insert statement")
-                .execute(named_params! {
-                    ":username": DEFAULT_ADMIN_USER_NAME,
-                    ":password": password_hash,
-                    ":permissions": i64::MAX
+            audit_service.log(None, "init");
+
+            let user_service = UsersService::new(db.clone());
+
+            let user_id = user_service
+                .create(&User {
+                    id: None,
+                    username: String::from(DEFAULT_ADMIN_USER_NAME),
+                    new_password: Some(String::from(DEFAULT_ADMIN_USER_PASSWORD)),
+                    enabled: true,
+                    permissions: UserPermission::MODIFY_SELF | UserPermission::USER_ADMIN,
+                    permission_modify_self: true,
+                    permission_user_admin: true,
+                    permission_setup_admin: false,
+                    permission_view_results: false,
+                    permission_view_scores: false,
+                    permission_enter_scores: false,
+                    permission_view_registration: false,
+                    permission_enter_registration: false,
                 })
-                .expect("Error occurred while creating default admin account");
+                .expect("Error occurred creating default admin user");
+
+            audit_service.log_data(None, "default_user_created", json!({"user_id": user_id}));
         }
 
-        Self { pool }
+        db
     }
 
     /// Gets an instance of the database connection pool
