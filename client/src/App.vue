@@ -23,6 +23,9 @@ const user = computed(() => authStore.user);
           <RouterLink :to="{ name: 'account' }">Account</RouterLink>
         </li>
         <li>
+          <RouterLink :to="{ name: 'about' }">About</RouterLink>
+        </li>
+        <li>
           <RouterLink :to="{ name: 'logout' }">Logout</RouterLink>
         </li>
       </ul>

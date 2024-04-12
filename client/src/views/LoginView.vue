@@ -42,10 +42,16 @@ onMounted(() => {
 <template>
   <main>
     <form @submit.prevent="login" :disabled="loading">
+      <h1>Garnet DeGelder's ScoreKeeper 2</h1>
+      <h2>Login</h2>
+
       <input v-model="username" type="text" placeholder="Username" />
       <input v-model="password" type="password" placeholder="Password" />
       <input type="submit" value="Log in" :disabled="loading" />
     </form>
+
+    <br />
+    <RouterLink :to="{ name: 'about' }">About</RouterLink>
   </main>
 </template>
 

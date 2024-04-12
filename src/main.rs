@@ -7,7 +7,9 @@ use std::{net::SocketAddr, path::Path, sync::Arc};
 
 use axum::{
     http::{header, Method},
-    middleware, Router,
+    middleware,
+    routing::get,
+    Router,
 };
 use helpers::api_request_logging;
 use tokio::{net::TcpListener, signal};
@@ -36,6 +38,13 @@ pub struct AppState {
     pub users_service: UsersService,
 }
 
+pub async fn license() -> &'static str {
+    include_str!("../LICENSE")
+}
+pub async fn version() -> &'static str {
+    env!("CARGO_PKG_VERSION")
+}
+
 #[tokio::main]
 pub async fn main() {
     let database = Database::new(DATABASE_FILE);
@@ -58,6 +67,14 @@ pub async fn main() {
         .route_service(
             "/*path",
             ServeDir::new(STATIC_FILE_ROOT).fallback(ServeFile::new(&static_file_index)),
+        )
+        .route(
+            "/about/version",
+            get(version),
+        )
+        .route(
+            "/about/license",
+            get(license),
         )
         .nest(
             "/api",
