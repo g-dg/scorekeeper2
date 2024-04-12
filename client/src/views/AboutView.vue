@@ -43,6 +43,11 @@ const clientVersion = ref<string>(__APP_VERSION__);
     <h2>License:</h2>
     <code v-if="license != undefined"><pre>{{ license }}</pre></code>
     <em v-else> MIT License </em>
+
+    <h2>Source Code:</h2>
+    <p>
+      The source code for the client and server is hosted on <a href="https://github.com/g-dg/scorekeeper2" target="_blank" rel="noopener noreferrer">Github</a>
+    </p>
   </main>
 </template>
 
