@@ -18,9 +18,18 @@ CREATE TABLE IF NOT EXISTS "sessions" (
 CREATE INDEX "index__sessions__user_id" ON "sessions" ("user_id");
 
 
+CREATE TABLE IF NOT EXISTS "season_score_calculators" (
+    "id" BLOB PRIMARY KEY NOT NULL DEFAULT (randomblob(16)),
+    "name" TEXT NOT NULL UNIQUE,
+    "description" TEXT,
+    "script" TEXT NOT NULL,
+    "config_options" TEXT NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS "seasons" (
     "id" BLOB PRIMARY KEY NOT NULL DEFAULT (randomblob(16)),
     "name" TEXT NOT NULL UNIQUE,
+    "score_calculator" BLOB REFERENCES "season_score_calculators" ("id"),
     "enabled" INTEGER NOT NULL DEFAULT 1
 );
 
@@ -44,10 +53,19 @@ CREATE TABLE IF NOT EXISTS "competitions" (
     "enabled" INTEGER NOT NULL DEFAULT 1
 );
 
+CREATE TABLE IF NOT EXISTS "competition_score_calculators" (
+    "id" BLOB PRIMARY KEY NOT NULL DEFAULT (randomblob(16)),
+    "name" TEXT NOT NULL UNIQUE,
+    "description" TEXT,
+    "script" TEXT NOT NULL,
+    "config_options" TEXT NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS "season_competitions" (
     "id" BLOB PRIMARY KEY NOT NULL DEFAULT (randomblob(16)),
     "season_id" BLOB NOT NULL REFERENCES "seasons" ("id"),
     "competition_id" BLOB NOT NULL REFERENCES "competitions" ("id"),
+    "score_calculator" BLOB REFERENCES "competition_score_calculators" ("id"),
     "enabled" INTEGER NOT NULL DEFAULT 1,
     UNIQUE("season_id", "competition_id")
 );
@@ -60,7 +78,7 @@ CREATE TABLE IF NOT EXISTS "teams" (
     UNIQUE("group_season_participation_id", "name")
 );
 
-CREATE TABLE IF NOT EXISTS "score_calculators" (
+CREATE TABLE IF NOT EXISTS "event_score_calculators" (
     "id" BLOB PRIMARY KEY NOT NULL DEFAULT (randomblob(16)),
     "name" TEXT NOT NULL UNIQUE,
     "description" TEXT,
@@ -81,7 +99,7 @@ CREATE TABLE IF NOT EXISTS "season_competition_events" (
     "id" BLOB PRIMARY KEY NOT NULL DEFAULT (randomblob(16)),
     "season_competition_id" BLOB NOT NULL REFERENCES "season_competitions" ("id"),
     "event_id" BLOB NOT NULL REFERENCES "events" ("id"),
-    "score_calculator" BLOB REFERENCES "score_calculators" ("id"),
+    "score_calculator" BLOB REFERENCES "event_score_calculators" ("id"),
     "enabled" INTEGER NOT NULL DEFAULT 1,
     "score_type" TEXT NOT NULL DEFAULT 'team',
     "score_config" TEXT NOT NULL,
