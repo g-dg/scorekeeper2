@@ -26,7 +26,7 @@ const router = createRouter({
     {
       name: "account",
       path: "/account",
-      component: () => import("@/views/Account.vue"),
+      component: () => import("@/views/AccountView.vue"),
     },
     {
       name: "user_admin",
