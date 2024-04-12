@@ -9,7 +9,7 @@ export interface LoginResponse {
 export class AuthClient {
   static async login(username: string, password: string): Promise<LoginResponse | false> {
     try {
-      let response = await api("/auth", "POST", { username, password });
+      let response = await api("auth", "POST", { username, password });
       return response as LoginResponse
     } catch (e) {
       return false;
@@ -17,11 +17,11 @@ export class AuthClient {
   }
 
   static async getCurrentUser(): Promise<User> {
-    let response = await api("/auth", "GET");
+    let response = await api("auth", "GET");
     return response as User
   }
 
   static async logout(): Promise<void> {
-    await api("/auth", "DELETE");
+    await api("auth", "DELETE");
   }
 }

@@ -1,8 +1,7 @@
 import router from "@/router";
 import { useAuthStore } from "@/stores/auth";
 
-const API_HOST = "http://localhost:8080";
-const API_PATH_PREFIX = "/api";
+export const API_URI = import.meta.env.VITE_API as string | undefined ?? `${window.location.protocol}//${window.location.host}/`;
 
 interface ApiOptions {
   bodyJson?: boolean,
@@ -15,7 +14,7 @@ export async function api(endpoint: string, method: "GET" | "POST" | "PUT" | "DE
   const apiToken = authStore.token;
 
   const response = await fetch(
-    API_HOST + API_PATH_PREFIX + endpoint,
+    API_URI + "api/" + endpoint,
     {
       body: body !== undefined ? (options?.bodyJson ?? true ? JSON.stringify(body) : body) : undefined,
       credentials: "include",

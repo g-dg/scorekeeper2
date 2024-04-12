@@ -30,28 +30,28 @@ export class UserPermission {
 
 export class UserClient {
   static async listUsers(): Promise<User[]> {
-    let response = await api("/users", "GET");
+    let response = await api("users", "GET");
     return response as User[];
   }
 
   static async createUser(user: User): Promise<void> {
-    await api("/users", "POST", user);
+    await api("users", "POST", user);
   }
 
   static async getUser(user_id: string): Promise<User> {
-    let response = await api(`/users/${encodeURIComponent(user_id)}`, "GET");
+    let response = await api(`users/${encodeURIComponent(user_id)}`, "GET");
     return response as User;
   }
 
   static async updateUser(user_id: string, user: User): Promise<void> {
-    await api(`/users/${encodeURIComponent(user_id)}`, "PUT", user);
+    await api(`users/${encodeURIComponent(user_id)}`, "PUT", user);
   }
 
   static async deleteUser(user_id: string): Promise<void> {
-    await api(`/users/${encodeURIComponent(user_id)}`, "DELETE");
+    await api(`users/${encodeURIComponent(user_id)}`, "DELETE");
   }
 
   static async changePassword(user_id: string, password: string): Promise<void> {
-    await api(`/users/${encodeURIComponent(user_id)}/password`, "PUT", password);
+    await api(`users/${encodeURIComponent(user_id)}/password`, "PUT", password);
   }
 }
