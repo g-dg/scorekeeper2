@@ -4,6 +4,7 @@ export interface User {
   id: string | null;
   username: string;
   new_password: string | null;
+  description: string;
   enabled: boolean;
   permissions: number;
   permission_modify_self: boolean;

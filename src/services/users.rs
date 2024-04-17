@@ -17,6 +17,7 @@ pub struct User {
     pub id: Option<Uuid>,
     pub username: String,
     pub new_password: Option<String>,
+    pub description: String,
     pub enabled: bool,
     pub permissions: i64,
     pub permission_user_admin: bool,
@@ -34,6 +35,7 @@ impl User {
             id: Some(user.id),
             username: user.username.clone(),
             new_password: None,
+            description: user.description.clone(),
             enabled: user.enabled,
             permissions: user.permissions,
             permission_user_admin: user.permissions & UserPermission::USER_ADMIN != 0,
@@ -120,12 +122,13 @@ impl UsersService {
         let permissions = Self::build_permissions(user);
 
         let db = self.db.get();
-        let success = db.prepare_cached("INSERT INTO \"users\" (\"id\", \"username\", \"password\", \"enabled\", \"permissions\") VALUES (:id, :username, :password, :enabled, :permissions);")
+        let success = db.prepare_cached("INSERT INTO \"users\" (\"id\", \"username\", \"password\", \"description\", \"enabled\", \"permissions\") VALUES (:id, :username, :password, :description, :enabled, :permissions);")
             .expect("Error preparing user insert statement")
             .execute(named_params! {
                 ":id": user_id,
                 ":username": user.username,
                 ":password": password_hash,
+                ":description": user.description,
                 ":enabled": user.enabled,
                 ":permissions": permissions
             })
@@ -155,12 +158,13 @@ impl UsersService {
         let permissions = Self::build_permissions(user);
 
         let db = self.db.get();
-        let success = db.prepare_cached("UPDATE \"users\" SET \"username\" = :username, \"password\" = :password, \"enabled\" = :enabled, \"permissions\" = :permissions WHERE \"id\" = :id;")
+        let success = db.prepare_cached("UPDATE \"users\" SET \"username\" = :username, \"password\" = :password, \"description\" = :description, \"enabled\" = :enabled, \"permissions\" = :permissions WHERE \"id\" = :id;")
             .expect("Error preparing user update statement")
             .execute(named_params! {
                 ":id": user.id,
                 ":username": user.username,
                 ":password": password_hash,
+                ":description": user.description,
                 ":enabled": user.enabled,
                 ":permissions": permissions
             })

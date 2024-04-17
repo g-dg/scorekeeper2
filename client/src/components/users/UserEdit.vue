@@ -17,6 +17,7 @@ const defaultUser: User = {
   id: null,
   username: "",
   new_password: "",
+  description: "",
   enabled: true,
   permissions: UserPermission.MODIFY_SELF,
   permission_modify_self: true,
@@ -191,6 +192,11 @@ async function invalidateSessions() {
         autocomplete="off"
         id="password_confirm"
       />
+
+      <br />
+
+      <label for="description">Description: </label>
+      <textarea v-model="user.description" id="description"></textarea>
 
       <br />
 
