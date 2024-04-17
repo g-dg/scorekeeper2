@@ -9,7 +9,7 @@ const isAuthenticated = computed(() => authStore.isAuthenticated);
 const license = ref<string>();
 async function loadLicense() {
   license.value = await (
-    await fetch(`${API_URI}about/license`, { mode: "cors", redirect: "follow" })
+    await fetch(`${API_URI}system/license`, { mode: "cors", redirect: "follow" })
   ).text();
 }
 onMounted(loadLicense);
@@ -17,7 +17,7 @@ onMounted(loadLicense);
 const serverVersion = ref<string>();
 async function loadVersion() {
   serverVersion.value = await (
-    await fetch(`${API_URI}about/version`, { mode: "cors", redirect: "follow" })
+    await fetch(`${API_URI}system/version`, { mode: "cors", redirect: "follow" })
   ).text();
 }
 onMounted(loadVersion);

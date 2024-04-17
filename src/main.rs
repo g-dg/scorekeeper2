@@ -73,9 +73,13 @@ pub async fn main() {
             "/*path",
             ServeDir::new(config.static_file_root).fallback(ServeFile::new(&static_file_index)),
         )
-        .route("/ping", post(ping))
-        .route("/about/serverVersion", get(version))
-        .route("/about/license", get(license))
+        .nest(
+            "/system",
+            Router::new()
+                .route("/ping", post(ping))
+                .route("/version", get(version))
+                .route("/license", get(license)),
+        )
         .nest(
             "/api",
             if config.enable_api_request_logging {
