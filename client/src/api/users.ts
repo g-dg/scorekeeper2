@@ -1,19 +1,19 @@
 import { api } from "./api";
 
 export interface User {
-  id: string | null,
-  username: string,
-  new_password: string | null,
-  enabled: boolean,
-  permissions: number,
-  permission_modify_self: boolean,
-  permission_user_admin: boolean,
-  permission_setup_admin: boolean,
-  permission_view_results: boolean,
-  permission_view_scores: boolean,
-  permission_enter_scores: boolean,
-  permission_view_registration: boolean,
-  permission_enter_registration: boolean,
+  id: string | null;
+  username: string;
+  new_password: string | null;
+  enabled: boolean;
+  permissions: number;
+  permission_modify_self: boolean;
+  permission_user_admin: boolean;
+  permission_setup_admin: boolean;
+  permission_view_results: boolean;
+  permission_view_scores: boolean;
+  permission_enter_scores: boolean;
+  permission_view_registration: boolean;
+  permission_enter_registration: boolean;
 }
 
 export class UserPermission {
@@ -51,7 +51,10 @@ export class UserClient {
     await api(`users/${encodeURIComponent(user_id)}`, "DELETE");
   }
 
-  static async changePassword(user_id: string, password: string): Promise<void> {
+  static async changePassword(
+    user_id: string,
+    password: string
+  ): Promise<void> {
     await api(`users/${encodeURIComponent(user_id)}/password`, "PUT", password);
   }
 }

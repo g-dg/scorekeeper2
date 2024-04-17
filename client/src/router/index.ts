@@ -50,7 +50,7 @@ const router = createRouter({
       path: "/users/new",
       props: false,
       component: () => import("@/components/users/UserEdit.vue"),
-    }
+    },
   ],
 });
 

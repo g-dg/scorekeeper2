@@ -25,7 +25,6 @@ async function login() {
       alert("Login Failed.");
       password.value = "";
     }
-
   } finally {
     loading.value = false;
   }
@@ -36,7 +35,6 @@ onMounted(() => {
     router.push({ name: "home" });
   }
 });
-
 </script>
 
 <template>

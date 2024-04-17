@@ -23,7 +23,9 @@ export const useAuthStore = defineStore("auth", () => {
   const authBroadcastChannel = new BroadcastChannel("ScoreKeeper_Auth");
 
   watch(token, () => {
-    if (token.value != window.localStorage.getItem(API_TOKEN_LOCALSTORAGE_KEY)) {
+    if (
+      token.value != window.localStorage.getItem(API_TOKEN_LOCALSTORAGE_KEY)
+    ) {
       if (token.value != null) {
         window.localStorage.setItem(API_TOKEN_LOCALSTORAGE_KEY, token.value);
         authBroadcastChannel.postMessage("login");

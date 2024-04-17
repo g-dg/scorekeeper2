@@ -10,19 +10,17 @@ onMounted(async () => {
   if (authStore.isAuthenticated) {
     try {
       await AuthClient.logout();
-    } catch { }
+    } catch {}
     authStore.user = null;
     authStore.token = null;
   }
 
   router.push({ name: "login" });
 });
-
 </script>
 
 <template>
-  <main>
-  </main>
+  <main></main>
 </template>
 
 <style lang="scss" scoped></style>

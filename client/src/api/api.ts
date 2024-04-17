@@ -1,32 +1,41 @@
 import router from "@/router";
 import { useAuthStore } from "@/stores/auth";
 
-export const API_URI = import.meta.env.VITE_API as string | undefined ?? `${window.location.protocol}//${window.location.host}/`;
+export const API_URI =
+  (import.meta.env.VITE_API as string | undefined) ??
+  `${window.location.protocol}//${window.location.host}/`;
 
 interface ApiOptions {
-  bodyJson?: boolean,
-  returnType?: "json" | "text" | "blob" | "response",
-  redirectOnUnauthorized?: boolean,
+  bodyJson?: boolean;
+  returnType?: "json" | "text" | "blob" | "response";
+  redirectOnUnauthorized?: boolean;
 }
 
-export async function api(endpoint: string, method: "GET" | "POST" | "PUT" | "DELETE", body?: any, options?: ApiOptions): Promise<any> {
+export async function api(
+  endpoint: string,
+  method: "GET" | "POST" | "PUT" | "DELETE",
+  body?: any,
+  options?: ApiOptions
+): Promise<any> {
   const authStore = useAuthStore();
   const apiToken = authStore.token;
 
-  const response = await fetch(
-    API_URI + "api/" + endpoint,
-    {
-      body: body !== undefined ? (options?.bodyJson ?? true ? JSON.stringify(body) : body) : undefined,
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-        ...(apiToken != null ? { "Authorization": `Bearer ${apiToken}` } : {})
-      },
-      method,
-      mode: "cors",
-      redirect: "follow"
-    }
-  );
+  const response = await fetch(API_URI + "api/" + endpoint, {
+    body:
+      body !== undefined
+        ? options?.bodyJson ?? true
+          ? JSON.stringify(body)
+          : body
+        : undefined,
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+      ...(apiToken != null ? { Authorization: `Bearer ${apiToken}` } : {}),
+    },
+    method,
+    mode: "cors",
+    redirect: "follow",
+  });
 
   const returnType = options?.returnType ?? "json";
 

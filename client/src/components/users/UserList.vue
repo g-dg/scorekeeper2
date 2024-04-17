@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { UserClient, UserPermission, type User } from '@/api/users';
-import { natcasecmp } from '@/helpers/sort';
-import { useAuthStore } from '@/stores/auth';
-import { computed, onMounted, ref } from 'vue';
+import { UserClient, type User } from "@/api/users";
+import { natcasecmp } from "@/helpers/sort";
+import { useAuthStore } from "@/stores/auth";
+import { computed, onMounted, ref } from "vue";
 
 const authStore = useAuthStore();
 const currentUserId = computed(() => authStore.user!.id);
@@ -14,7 +14,9 @@ const loading = ref(0);
 async function loadUsers() {
   try {
     loading.value++;
-    users.value = (await UserClient.listUsers()).sort((a, b) => natcasecmp(a.username, b.username));
+    users.value = (await UserClient.listUsers()).sort((a, b) =>
+      natcasecmp(a.username, b.username)
+    );
   } catch (e) {
     alert("Error occurred loading users");
     throw e;
@@ -23,14 +25,13 @@ async function loadUsers() {
   }
 }
 onMounted(loadUsers);
-
 </script>
 
 <template>
   <main>
-    <h1> User Administration </h1>
+    <h1>User Administration</h1>
 
-    <button @click="loadUsers"> Reload </button>
+    <button @click="loadUsers">Reload</button>
     <br />
 
     <RouterLink :to="{ name: 'user_create' }">Create</RouterLink>
@@ -50,9 +51,11 @@ onMounted(loadUsers);
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(user) in users" :key="user.id ?? ''">
+        <tr v-for="user in users" :key="user.id ?? ''">
           <td>
-            <RouterLink :to="{ name: 'user_edit', params: { id: user.id } }">{{ user.username }}</RouterLink>
+            <RouterLink :to="{ name: 'user_edit', params: { id: user.id } }">
+              {{ user.username }}
+            </RouterLink>
           </td>
           <td>
             {{ user.enabled ? "Yes" : "No" }}
@@ -84,7 +87,7 @@ onMounted(loadUsers);
         </tr>
       </tbody>
     </table>
-    <div v-else style="text-align: center;"> Loading... </div>
+    <div v-else style="text-align: center">Loading...</div>
   </main>
 </template>
 
