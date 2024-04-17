@@ -38,6 +38,7 @@ onMounted(loadUsers);
     <table v-if="!loading">
       <thead>
         <tr>
+          <th></th>
           <th>Username</th>
           <th>Enabled</th>
           <th>Account</th>
@@ -54,8 +55,11 @@ onMounted(loadUsers);
         <tr v-for="user in users" :key="user.id ?? ''">
           <td>
             <RouterLink :to="{ name: 'user_edit', params: { id: user.id } }">
-              {{ user.username }}
+              Edit
             </RouterLink>
+          </td>
+          <td>
+            {{ user.username }}
           </td>
           <td>
             {{ user.enabled ? "Yes" : "No" }}

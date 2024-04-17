@@ -208,19 +208,35 @@ impl AuthService {
             .log_data(user_id, "logout", json!({"session_id": token}));
     }
 
-    pub fn invalidate_all_sessions(&self, user_id: Uuid) {
+    pub fn invalidate_sessions(&self, user_id: Uuid, except: Option<&str>) {
         let db = self.db.get();
 
-        db.prepare_cached(
-            "UPDATE \"sessions\" SET \"valid\" = FALSE WHERE \"user_id\" = :user_id;",
-        )
-        .expect("Error occurred preparing session update database query")
-        .execute(named_params! {":user_id": user_id})
-        .expect("Error occurred invalidating all sessions for user");
+        if let Some(token) = except {
+            db.prepare_cached(
+                "UPDATE \"sessions\" SET \"valid\" = FALSE WHERE \"user_id\" = :user_id AND \"token\" != :token;",
+            )
+            .expect("Error occurred preparing session update database query")
+            .execute(named_params! {":user_id": user_id, ":token": token})
+            .expect("Error occurred invalidating sessions for user");
 
-        // audit logout
-        self.audit_service
-            .log(Some(user_id), "session_invalidate_all");
+            // audit session invalidation
+            self.audit_service.log_data(
+                Some(user_id),
+                "session_invalidate_all_except",
+                json!({"except": token}),
+            );
+        } else {
+            db.prepare_cached(
+                "UPDATE \"sessions\" SET \"valid\" = FALSE WHERE \"user_id\" = :user_id;",
+            )
+            .expect("Error occurred preparing session update database query")
+            .execute(named_params! {":user_id": user_id})
+            .expect("Error occurred invalidating all sessions for user");
+
+            // audit session invalidation
+            self.audit_service
+                .log(Some(user_id), "session_invalidate_all");
+        }
     }
 
     pub fn get_user_id_from_token(&self, token: &str) -> Option<Uuid> {

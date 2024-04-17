@@ -51,6 +51,10 @@ export class UserClient {
     await api(`users/${encodeURIComponent(user_id)}`, "DELETE");
   }
 
+  static async invalidateSessions(user_id: string): Promise<void> {
+    await api(`users/${encodeURIComponent(user_id)}/sessions`, "DELETE");
+  }
+
   static async changePassword(
     user_id: string,
     password: string

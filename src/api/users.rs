@@ -24,6 +24,7 @@ pub fn route() -> Router<Arc<AppState>> {
         .route("/:user_id", get(get_user))
         .route("/:user_id", put(update_user))
         .route("/:user_id", delete(delete_user))
+        .route("/:user_id/sessions", delete(invalidate_sessions))
         .route("/:user_id/password", put(change_password))
 }
 
@@ -146,6 +147,28 @@ pub async fn delete_user(
     }
 }
 
+pub async fn invalidate_sessions(
+    State(state): State<Arc<AppState>>,
+    Path(user_id): Path<Uuid>,
+    token: AuthToken,
+) -> impl IntoResponse {
+    let Some(current_user) = token.authorize(&state, UserPermission::USER_ADMIN) else {
+        return AuthToken::failure_response();
+    };
+
+    state.auth_service.invalidate_sessions(user_id, None);
+
+    state.audit_service.log_data(
+        Some(current_user.id),
+        "user_sessions_invalidate",
+        json!({
+            "user_id": user_id,
+        }),
+    );
+
+    StatusCode::NO_CONTENT.into_response()
+}
+
 pub async fn change_password(
     State(state): State<Arc<AppState>>,
     Path(user_id): Path<Uuid>,
@@ -163,7 +186,9 @@ pub async fn change_password(
         return StatusCode::FORBIDDEN.into_response();
     }
 
-    let result = state.users_service.change_password(user_id, request);
+    let result = state
+        .users_service
+        .change_password(user_id, &request, Some(&token.token));
 
     state.audit_service.log_data(
         Some(current_user.id),

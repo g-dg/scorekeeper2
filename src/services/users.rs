@@ -169,8 +169,7 @@ impl UsersService {
         // if user is disabled or permissions changed, invalidate all sessions for that user
         if !user.enabled || user.permissions != old_user.permissions {
             let auth_service = AuthService::new(self.db.clone());
-
-            auth_service.invalidate_all_sessions(user_id);
+            auth_service.invalidate_sessions(user_id, None);
         }
 
         if success {
@@ -202,8 +201,13 @@ impl UsersService {
         }
     }
 
-    pub fn change_password(&self, user_id: Uuid, new_password: String) -> Result<(), GenericError> {
-        let password_hash = AuthService::hash_password(&new_password);
+    pub fn change_password(
+        &self,
+        user_id: Uuid,
+        new_password: &str,
+        session_to_keep: Option<&str>,
+    ) -> Result<(), GenericError> {
+        let password_hash = AuthService::hash_password(new_password);
 
         let db = self.db.get();
         let success = db
@@ -214,6 +218,9 @@ impl UsersService {
                 ":password": password_hash,
             })
             .is_ok();
+
+        let auth_service = AuthService::new(self.db.clone());
+        auth_service.invalidate_sessions(user_id, session_to_keep);
 
         if success {
             Ok(())

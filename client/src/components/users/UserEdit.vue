@@ -125,6 +125,23 @@ async function deleteUser() {
     }
   }
 }
+
+async function invalidateSessions() {
+  if (
+    confirm(`Really invalidate sessions for user "${user.value.username}"?`)
+  ) {
+    try {
+      loading.value++;
+      await UserClient.invalidateSessions(userId.value!);
+    } catch (e) {
+      alert("Error occurred invalidating sessions");
+      throw e;
+    } finally {
+      await loadUser();
+      loading.value--;
+    }
+  }
+}
 </script>
 
 <template>
@@ -266,7 +283,16 @@ async function deleteUser() {
       <button v-if="userId != null" @click="updateUser" type="submit">
         Update
       </button>
-      <button v-if="userId != null" @click="deleteUser">Delete</button>
+      <button
+        v-if="userId != null"
+        @click="deleteUser"
+        :disabled="userId == currentUserId"
+      >
+        Delete
+      </button>
+      <button v-if="userId != null" @click="invalidateSessions">
+        Logout
+      </button>
     </form>
     <em v-else>Loading...</em>
   </main>
