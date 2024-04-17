@@ -1,4 +1,5 @@
 pub mod api;
+pub mod config;
 pub mod database;
 pub mod helpers;
 pub mod services;
@@ -8,9 +9,10 @@ use std::{net::SocketAddr, path::Path, sync::Arc};
 use axum::{
     http::{header, Method},
     middleware,
-    routing::get,
+    routing::{get, post},
     Router,
 };
+use config::Config;
 use helpers::api_request_logging;
 use tokio::{net::TcpListener, signal};
 use tower::ServiceBuilder;
@@ -24,20 +26,19 @@ use tower_http::{
 use database::Database;
 use services::{audit::AuditService, auth::AuthService, users::UsersService};
 
-const STATIC_FILE_ROOT: &str = "./client/dist/";
-const STATIC_FILE_INDEX: &str = "index.html";
-const DATABASE_FILE: &str = "./database.sqlite3";
-const ENABLE_API_REQUEST_LOGGING: bool = true;
-
-const CORS_ALLOWED_ORIGINS: &[&str] = &["http://localhost:5173", "http://127.0.0.1:5173"];
+const CONFIG_FILE: &str = "./config.json";
 
 pub struct AppState {
+    pub config: Config,
     pub database: Database,
     pub audit_service: AuditService,
     pub auth_service: AuthService,
     pub users_service: UsersService,
 }
 
+pub async fn ping(request: String) -> String {
+    request
+}
 pub async fn license() -> &'static str {
     include_str!("../LICENSE")
 }
@@ -47,17 +48,21 @@ pub async fn version() -> &'static str {
 
 #[tokio::main]
 pub async fn main() {
-    let database = Database::new(DATABASE_FILE);
+    let config = Config::load(CONFIG_FILE).await;
+
+    let database = Database::new(&config.database_file);
     let app_state = Arc::new(AppState {
         audit_service: AuditService::new(database.clone()),
         auth_service: AuthService::new(database.clone()),
         users_service: UsersService::new(database.clone()),
         database,
+        config: config.clone(),
     });
 
-    let static_file_index = Path::new(STATIC_FILE_ROOT).join(STATIC_FILE_INDEX);
+    let static_file_index = Path::new(&config.static_file_root).join(config.static_file_index);
 
-    let cors_origins: Vec<_> = CORS_ALLOWED_ORIGINS
+    let cors_origins: Vec<_> = config
+        .cors_allowed_origins
         .iter()
         .map(|x| x.parse().unwrap())
         .collect();
@@ -66,19 +71,14 @@ pub async fn main() {
         .route_service("/", ServeFile::new(&static_file_index))
         .route_service(
             "/*path",
-            ServeDir::new(STATIC_FILE_ROOT).fallback(ServeFile::new(&static_file_index)),
+            ServeDir::new(config.static_file_root).fallback(ServeFile::new(&static_file_index)),
         )
-        .route(
-            "/about/version",
-            get(version),
-        )
-        .route(
-            "/about/license",
-            get(license),
-        )
+        .route("/ping", post(ping))
+        .route("/about/serverVersion", get(version))
+        .route("/about/license", get(license))
         .nest(
             "/api",
-            if ENABLE_API_REQUEST_LOGGING {
+            if config.enable_api_request_logging {
                 api::route().layer(middleware::from_fn_with_state(
                     app_state.clone(),
                     api_request_logging::request_logging,
