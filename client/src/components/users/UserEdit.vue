@@ -69,15 +69,11 @@ onMounted(loadUser);
 watch(userId, loadUser);
 
 async function createUser() {
-  if (password.value != "" || blankPassword.value) {
-    if (password.value == passwordConfirm.value) {
-      user.value.new_password = password.value;
-    } else {
-      alert("Passwords do not match");
-      return;
-    }
+  if (password.value == passwordConfirm.value) {
+    user.value.new_password = password.value;
   } else {
-    user.value.new_password = null;
+    alert("Passwords do not match");
+    return;
   }
 
   try {
@@ -88,7 +84,7 @@ async function createUser() {
     alert("Error occurred creating user");
     throw e;
   } finally {
-    await router.push({ name: "user_admin" });
+    await router.push({ name: "user_list" });
     loading.value--;
   }
 }
@@ -126,7 +122,7 @@ async function deleteUser() {
       alert("Error occurred deleting user");
       throw e;
     } finally {
-      await router.push({ name: "user_admin" });
+      await router.push({ name: "user_list" });
       loading.value--;
     }
   }
@@ -161,8 +157,10 @@ async function deleteUser() {
       <label for="password">Password: </label>
       <input v-model="password" type="password" autocomplete="off" id="password" />
 
-      <label for="blank_password"> Blank: </label>
-      <input v-model="blankPassword" type="checkbox" id="blank_password" />
+      <template v-if="userId != null">
+        <label for="blank_password"> Blank: </label>
+        <input v-model="blankPassword" type="checkbox" id="blank_password" />
+      </template>
 
       <br />
 
