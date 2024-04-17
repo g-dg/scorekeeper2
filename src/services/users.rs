@@ -166,12 +166,6 @@ impl UsersService {
             })
             .is_ok();
 
-        // if user is disabled or permissions changed, invalidate all sessions for that user
-        if !user.enabled || user.permissions != old_user.permissions {
-            let auth_service = AuthService::new(self.db.clone());
-            auth_service.invalidate_sessions(user_id, None);
-        }
-
         if success {
             Ok(user_id)
         } else {
