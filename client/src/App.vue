@@ -17,7 +17,7 @@ const user = computed(() => authStore.user);
           <RouterLink :to="{ name: 'home' }">Home</RouterLink>
         </li>
         <li v-if="user?.permission_user_admin">
-          <RouterLink :to="{ name: 'user_admin' }">Users</RouterLink>
+          <RouterLink :to="{ name: 'user_list' }">Users</RouterLink>
         </li>
         <li v-if="user?.permission_modify_self">
           <RouterLink :to="{ name: 'account' }">Account</RouterLink>

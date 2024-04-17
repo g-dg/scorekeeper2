@@ -35,10 +35,22 @@ const router = createRouter({
       component: () => import("@/views/AccountView.vue"),
     },
     {
-      name: "user_admin",
+      name: "user_list",
       path: "/users",
-      component: () => import("@/views/UserAdmin.vue"),
+      component: () => import("@/components/users/UserList.vue"),
     },
+    {
+      name: "user_edit",
+      path: "/users/:id",
+      props: true,
+      component: () => import("@/components/users/UserEdit.vue"),
+    },
+    {
+      name: "user_create",
+      path: "/users/new",
+      props: false,
+      component: () => import("@/components/users/UserEdit.vue"),
+    }
   ],
 });
 

@@ -78,7 +78,7 @@ pub async fn get_user(
         return AuthToken::failure_response();
     };
 
-    let result = state.users_service.get_user_by_id(user_id);
+    let result = state.users_service.get(user_id);
 
     match result {
         Some(user) => Json(user).into_response(),

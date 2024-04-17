@@ -92,6 +92,11 @@ impl UsersService {
         user_result
     }
 
+    pub fn get(&self, id: Uuid) -> Option<User> {
+        self.get_user_by_id(id)
+            .map(|user| User::from_db_user(&user))
+    }
+
     pub fn list(&self) -> Vec<User> {
         let db = self.db.get();
 
