@@ -108,6 +108,14 @@ async function updateUser() {
     throw e;
   } finally {
     await loadUser();
+
+    // update user in auth store if editing the current user
+    if (userId.value == currentUserId.value) {
+      let authUser = clone(user.value);
+      authUser.new_password = null;
+      authStore.user = authUser;
+    }
+
     loading.value--;
   }
 }

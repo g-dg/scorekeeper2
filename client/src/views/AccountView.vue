@@ -40,7 +40,7 @@ async function changePassword() {
   <main>
     <h1>My Account</h1>
 
-    <form @submit.prevent="changePassword">
+    <form v-if="authStore.user?.permission_modify_self" @submit.prevent="changePassword">
       Change Password:
       <input
         v-model="new_password"

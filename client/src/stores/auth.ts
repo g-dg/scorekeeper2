@@ -3,8 +3,13 @@ import { defineStore } from "pinia";
 import type { User } from "@/api/users";
 import router from "@/router";
 
+interface AuthStorage {
+  token: string | null;
+  user: User | null;
+}
+
 export const useAuthStore = defineStore("auth", () => {
-  const API_TOKEN_LOCALSTORAGE_KEY = "ScoreKeeper_ApiToken";
+  const AUTH_LOCALSTORAGE_KEY = "ScoreKeeper_Auth";
 
   const token = ref<string | null>(null);
 
@@ -14,40 +19,53 @@ export const useAuthStore = defineStore("auth", () => {
 
   function loadFromLocalStorage() {
     if (token.value == null) {
-      token.value = window.localStorage.getItem(API_TOKEN_LOCALSTORAGE_KEY);
+      const storage = getStorage();
+      token.value = storage.token;
+      user.value = storage.user;
     }
   }
 
   loadFromLocalStorage();
 
-  const authBroadcastChannel = new BroadcastChannel("ScoreKeeper_Auth");
-
   watch(token, () => {
-    if (
-      token.value != window.localStorage.getItem(API_TOKEN_LOCALSTORAGE_KEY)
-    ) {
-      if (token.value != null) {
-        window.localStorage.setItem(API_TOKEN_LOCALSTORAGE_KEY, token.value);
-        authBroadcastChannel.postMessage("login");
+    if (token.value != null) {
+      setStorage({ token: token.value, user: user.value });
+    } else {
+      removeStorage();
+    }
+  });
+
+  watch(user, () => {
+    setStorage({ token: token.value, user: user.value });
+  });
+
+  window.addEventListener("storage", (evt) => {
+    if (evt.key === AUTH_LOCALSTORAGE_KEY && evt.oldValue != evt.newValue) {
+      const storage = getStorage();
+      token.value = storage.token;
+      if (token.value == null) {
+        user.value = null;
+        router.push({ name: "logout" });
       } else {
-        window.localStorage.removeItem(API_TOKEN_LOCALSTORAGE_KEY);
-        authBroadcastChannel.postMessage("logout");
+        user.value = storage.user;
       }
     }
   });
 
-  authBroadcastChannel.addEventListener("message", (event) => {
-    switch (event.data) {
-      case "login":
-        token.value = window.localStorage.getItem(API_TOKEN_LOCALSTORAGE_KEY);
-        break;
-      case "logout":
-        token.value = null;
-        user.value = null;
-        router.push({ name: "login" });
-        break;
-    }
-  });
+  function getStorage(): AuthStorage {
+    const json =
+      window.localStorage.getItem(AUTH_LOCALSTORAGE_KEY) ??
+      JSON.stringify({ token: null, user: null });
+    return JSON.parse(json);
+  }
+
+  function setStorage(authObj: AuthStorage) {
+    window.localStorage.setItem(AUTH_LOCALSTORAGE_KEY, JSON.stringify(authObj));
+  }
+
+  function removeStorage() {
+    window.localStorage.removeItem(AUTH_LOCALSTORAGE_KEY);
+  }
 
   return {
     token,
