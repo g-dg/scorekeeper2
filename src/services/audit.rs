@@ -44,7 +44,7 @@ impl AuditService {
         });
 
         db.prepare_cached("INSERT INTO \"audit\" (\"id\", \"user_id\", \"timestamp\", \"action\", \"data\") VALUES (:id, :user_id, :timestamp, :action, :data);")
-            .expect("Error occurred preparing audit logging statement")
+            .unwrap()
             .execute(named_params! {
                 ":id": entry_id,
                 ":user_id": user_id,

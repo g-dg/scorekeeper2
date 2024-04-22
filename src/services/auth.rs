@@ -82,7 +82,7 @@ impl AuthService {
         // insert session into database
         db
             .prepare_cached("INSERT INTO \"sessions\" (\"token\", \"user_id\", \"timestamp\", \"valid\") VALUES (:token, :user_id, :timestamp, TRUE);")
-            .expect("Error occurred preparing session insert database query")
+            .unwrap()
             .execute(named_params! {":token": &token, ":user_id": user.id, ":timestamp": timestamp})
             .expect("Error occurred inserting session into database");
 
@@ -105,7 +105,7 @@ impl AuthService {
                 "SELECT {} FROM \"sessions\" WHERE \"token\" = :token;",
                 DbSession::COLUMNS_SQL
             ))
-            .expect("Error occurred preparing session select database query")
+            .unwrap()
             .query_row(named_params! {":token": token}, |row| {
                 Ok(DbSession::from_row(row))
             })
@@ -149,7 +149,7 @@ impl AuthService {
             db.prepare_cached(
                 "UPDATE \"sessions\" SET \"timestamp\" = :timestamp WHERE \"token\" = :token;",
             )
-            .expect("Error occurred preparing session update database query")
+            .unwrap()
             .execute(named_params! {":timestamp": now, ":token": token})
             .expect("Error occurred updating session timestamp");
         }
@@ -199,7 +199,7 @@ impl AuthService {
 
         // set valid flag to false for session
         db.prepare_cached("UPDATE \"sessions\" SET \"valid\" = FALSE WHERE \"token\" = :token;")
-            .expect("Error occurred preparing session update database query")
+            .unwrap()
             .execute(named_params! {":token": token})
             .expect("Error occurred logging out session");
 
@@ -215,7 +215,7 @@ impl AuthService {
             db.prepare_cached(
                 "UPDATE \"sessions\" SET \"valid\" = FALSE WHERE \"user_id\" = :user_id AND \"token\" != :token;",
             )
-            .expect("Error occurred preparing session update database query")
+            .unwrap()
             .execute(named_params! {":user_id": user_id, ":token": token})
             .expect("Error occurred invalidating sessions for user");
 
@@ -229,7 +229,7 @@ impl AuthService {
             db.prepare_cached(
                 "UPDATE \"sessions\" SET \"valid\" = FALSE WHERE \"user_id\" = :user_id;",
             )
-            .expect("Error occurred preparing session update database query")
+            .unwrap()
             .execute(named_params! {":user_id": user_id})
             .expect("Error occurred invalidating all sessions for user");
 
@@ -247,7 +247,7 @@ impl AuthService {
                 "SELECT {} FROM \"sessions\" WHERE \"token\" = :token;",
                 DbSession::COLUMNS_SQL
             ))
-            .expect("Error occurred preparing session select database query")
+            .unwrap()
             .query_row(named_params! {":token": token}, |row| {
                 Ok(DbSession::from_row(row))
             })

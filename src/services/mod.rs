@@ -1,3 +1,12 @@
 pub mod audit;
 pub mod auth;
+pub mod competition_events;
+pub mod competitions;
+pub mod events;
+pub mod group_participation;
+pub mod groups;
+pub mod scores;
+pub mod season_competitions;
+pub mod seasons;
+pub mod teams;
 pub mod users;

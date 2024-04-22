@@ -13,10 +13,10 @@ CREATE TABLE IF NOT EXISTS "sessions" (
     "id" BLOB PRIMARY KEY NOT NULL DEFAULT (randomblob(16)),
     "token" TEXT NOT NULL UNIQUE,
     "user_id" BLOB NOT NULL,
-    "timestamp" TEXT NOT NULL DEFAULT (strftime('%s')),
+    "timestamp" TEXT NOT NULL DEFAULT (strftime('%Y-%m-%d %H:%M:%f+00:00')),
     "valid" INTEGER NOT NULL DEFAULT 1
 );
-CREATE INDEX "index__sessions__user_id" ON "sessions" ("user_id");
+CREATE INDEX IF NOT EXISTS "index__sessions__user_id" ON "sessions" ("user_id");
 
 
 CREATE TABLE IF NOT EXISTS "season_score_calculators" (
@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS "groups" (
     "enabled" INTEGER NOT NULL DEFAULT 1
 );
 
-CREATE TABLE IF NOT EXISTS "participation" (
+CREATE TABLE IF NOT EXISTS "group_participation" (
     "id" BLOB PRIMARY KEY NOT NULL DEFAULT (randomblob(16)),
     "group_id" BLOB NOT NULL REFERENCES "groups" ("id"),
     "season_id" BLOB NOT NULL REFERENCES "seasons" ("id"),
@@ -78,11 +78,11 @@ CREATE TABLE IF NOT EXISTS "season_competitions" (
 
 CREATE TABLE IF NOT EXISTS "teams" (
     "id" BLOB PRIMARY KEY NOT NULL DEFAULT (randomblob(16)),
-    "participation_id" BLOB NOT NULL REFERENCES "participation" ("id"),
+    "group_participation_id" BLOB NOT NULL REFERENCES "group_participation" ("id"),
     "name" TEXT NOT NULL,
     "description" TEXT NOT NULL DEFAULT "",
     "enabled" INTEGER NOT NULL DEFAULT 1,
-    UNIQUE("participation_id", "name")
+    UNIQUE("group_participation_id", "name")
 );
 
 CREATE TABLE IF NOT EXISTS "event_score_calculators" (
@@ -118,32 +118,32 @@ CREATE TABLE IF NOT EXISTS "competition_events" (
 CREATE TABLE IF NOT EXISTS "group_scores" (
     "id" BLOB PRIMARY KEY NOT NULL DEFAULT (randomblob(16)),
     "competition_event_id" BLOB NOT NULL REFERENCES "competition_events" ("id"),
-    "group_id" BLOB NOT NULL REFERENCES "groups" ("id"),
+    "group_participation_id" BLOB NOT NULL REFERENCES "group_participation" ("id"),
     "score_data" TEXT NOT NULL,
-    "timestamp" TEXT NOT NULL DEFAULT (strftime('%s')),
+    "timestamp" TEXT NOT NULL DEFAULT (strftime('%Y-%m-%d %H:%M:%f+00:00')),
     "valid" INTEGER NOT NULL DEFAULT 1,
     "disqualified" INTEGER NOT NULL DEFAULT 0,
     "notes" TEXT NOT NULL DEFAULT ""
 );
-CREATE INDEX "index__group_scores__competition_event_id__group_id" ON "group_scores" ("competition_event_id", "group_id");
+CREATE INDEX IF NOT EXISTS "index__group_scores__competition_event_id__group_participation_id" ON "group_scores" ("competition_event_id", "group_participation_id");
 
 CREATE TABLE IF NOT EXISTS "team_scores" (
     "id" BLOB PRIMARY KEY NOT NULL DEFAULT (randomblob(16)),
     "competition_event_id" BLOB NOT NULL REFERENCES "competition_events" ("id"),
     "team_id" BLOB NOT NULL REFERENCES "teams" ("id"),
     "score_data" TEXT NOT NULL,
-    "timestamp" TEXT NOT NULL DEFAULT (strftime('%s')),
+    "timestamp" TEXT NOT NULL DEFAULT (strftime('%Y-%m-%d %H:%M:%f+00:00')),
     "valid" INTEGER NOT NULL DEFAULT 1,
     "disqualified" INTEGER NOT NULL DEFAULT 0,
     "notes" TEXT NOT NULL DEFAULT ""
 );
-CREATE INDEX "index__team_scores__competition_event_id__team_id" ON "team_scores" ("competition_event_id", "group_id");
+CREATE INDEX IF NOT EXISTS "index__team_scores__competition_event_id__team_id" ON "team_scores" ("competition_event_id", "team_id");
 
 
 CREATE TABLE IF NOT EXISTS "audit" (
     "id" BLOB PRIMARY KEY NOT NULL DEFAULT (randomblob(16)),
     "user_id" BLOB,
-    "timestamp" TEXT NOT NULL DEFAULT (strftime('%s')),
+    "timestamp" TEXT NOT NULL DEFAULT (strftime('%Y-%m-%d %H:%M:%f+00:00')),
     "action" TEXT NOT NULL,
     "data" TEXT
 );

@@ -1,3 +1,13 @@
+pub mod competition_events;
+pub mod competitions;
+pub mod events;
+pub mod group_participation;
+pub mod groups;
+pub mod score_calculators;
+pub mod scores;
+pub mod season_competitions;
+pub mod seasons;
+pub mod teams;
 pub mod users;
 
 use r2d2::{Pool, PooledConnection};
@@ -39,7 +49,7 @@ impl Database {
             "season_score_calculators",
             "seasons",
             "groups",
-            "participation",
+            "group_participation",
             "competitions",
             "competition_score_calculators",
             "season_competitions",
@@ -56,7 +66,7 @@ impl Database {
         // check if tables exist
         let table_count: i64 = conn
             .prepare_cached(&format!("SELECT count() AS \"count\" FROM \"sqlite_master\" WHERE \"name\" IN {} AND \"type\" = 'table';", table_sql))
-            .expect("Error occurred while preparing query to check for database initialization")
+            .unwrap()
             .query_row([], |row| row.get("count"))
             .expect("Error occurred while checking for database initialization");
         let tables_exist = table_count == tables.len() as i64;

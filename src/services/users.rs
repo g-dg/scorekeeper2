@@ -68,7 +68,7 @@ impl UsersService {
                 "SELECT {} FROM \"users\" WHERE \"id\" = :id;",
                 DbUser::COLUMNS_SQL
             ))
-            .expect("Error occurred preparing user select database query")
+            .unwrap()
             .query_row(named_params! {":id": id}, |row| Ok(DbUser::from_row(row)))
             .optional()
             .expect("Error occurred getting user by id from database");
@@ -84,7 +84,7 @@ impl UsersService {
                 "SELECT {} FROM \"users\" WHERE \"username\" = :username;",
                 DbUser::COLUMNS_SQL
             ))
-            .expect("Error occurred preparing user select database query")
+            .unwrap()
             .query_row(named_params! {":username": username}, |row| {
                 Ok(DbUser::from_row(row))
             })
@@ -104,7 +104,7 @@ impl UsersService {
 
         let users = db
             .prepare_cached(&format!("SELECT {} FROM \"users\";", DbUser::COLUMNS_SQL))
-            .expect("Error occurred preparing user select database query")
+            .unwrap()
             .query_map(named_params! {}, |row| Ok(DbUser::from_row(row)))
             .expect("Error occurred getting all users from database")
             .map(|db_user| User::from_db_user(&db_user.unwrap()))
@@ -123,7 +123,7 @@ impl UsersService {
 
         let db = self.db.get();
         let success = db.prepare_cached("INSERT INTO \"users\" (\"id\", \"username\", \"password\", \"description\", \"enabled\", \"permissions\") VALUES (:id, :username, :password, :description, :enabled, :permissions);")
-            .expect("Error preparing user insert statement")
+            .unwrap()
             .execute(named_params! {
                 ":id": user_id,
                 ":username": user.username,
@@ -159,7 +159,7 @@ impl UsersService {
 
         let db = self.db.get();
         let success = db.prepare_cached("UPDATE \"users\" SET \"username\" = :username, \"password\" = :password, \"description\" = :description, \"enabled\" = :enabled, \"permissions\" = :permissions WHERE \"id\" = :id;")
-            .expect("Error preparing user update statement")
+            .unwrap()
             .execute(named_params! {
                 ":id": user.id,
                 ":username": user.username,
@@ -186,7 +186,7 @@ impl UsersService {
 
         let success = db
             .prepare_cached("DELETE FROM \"users\" WHERE \"id\" = :id;")
-            .expect("Error preparing user delete statement")
+            .unwrap()
             .execute(named_params! {
                 ":id": user.id,
             })
@@ -210,7 +210,7 @@ impl UsersService {
         let db = self.db.get();
         let success = db
             .prepare_cached("UPDATE \"users\" SET \"password\" = :password WHERE \"id\" = :id;")
-            .expect("Error preparing user update statement")
+            .unwrap()
             .execute(named_params! {
                 ":id": user_id,
                 ":password": password_hash,
