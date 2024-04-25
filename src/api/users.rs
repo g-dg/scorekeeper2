@@ -38,6 +38,23 @@ pub async fn list_users(State(state): State<Arc<AppState>>, token: AuthToken) ->
     Json(users).into_response()
 }
 
+pub async fn get_user(
+    State(state): State<Arc<AppState>>,
+    Path(user_id): Path<Uuid>,
+    token: AuthToken,
+) -> impl IntoResponse {
+    let Some(_current_user) = token.authorize(&state, UserPermission::USER_ADMIN) else {
+        return AuthToken::failure_response();
+    };
+
+    let result = state.users_service.get(user_id);
+
+    match result {
+        Some(user) => Json(user).into_response(),
+        None => StatusCode::NOT_FOUND.into_response(),
+    }
+}
+
 pub async fn create_user(
     State(state): State<Arc<AppState>>,
     token: AuthToken,
@@ -67,23 +84,6 @@ pub async fn create_user(
     match result {
         Ok(id) => Json(id).into_response(),
         Err(err) => err.to_status_code().into_response(),
-    }
-}
-
-pub async fn get_user(
-    State(state): State<Arc<AppState>>,
-    Path(user_id): Path<Uuid>,
-    token: AuthToken,
-) -> impl IntoResponse {
-    let Some(_current_user) = token.authorize(&state, UserPermission::USER_ADMIN) else {
-        return AuthToken::failure_response();
-    };
-
-    let result = state.users_service.get(user_id);
-
-    match result {
-        Some(user) => Json(user).into_response(),
-        None => StatusCode::NOT_FOUND.into_response(),
     }
 }
 

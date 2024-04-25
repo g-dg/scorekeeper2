@@ -5,6 +5,7 @@ pub mod competitions;
 pub mod events;
 pub mod group_participation;
 pub mod groups;
+pub mod score_calculators;
 pub mod scores;
 pub mod season_competitions;
 pub mod seasons;

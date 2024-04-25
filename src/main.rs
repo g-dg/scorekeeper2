@@ -24,7 +24,14 @@ use tower_http::{
 };
 
 use database::Database;
-use services::{audit::AuditService, auth::AuthService, users::UsersService};
+use services::{
+    audit::AuditService, auth::AuthService, competition_events::CompetitionEventsService,
+    competitions::CompetitionsService, events::EventsService,
+    group_participation::GroupParticipationService, groups::GroupsService,
+    score_calculators::ScoreCalculatorsService, scores::ScoresService,
+    season_competitions::SeasonCompetitionsService, seasons::SeasonsService, teams::TeamsService,
+    users::UsersService,
+};
 
 const CONFIG_FILE: &str = "./config.json";
 
@@ -34,6 +41,16 @@ pub struct AppState {
     pub audit_service: AuditService,
     pub auth_service: AuthService,
     pub users_service: UsersService,
+    pub score_calculators_service: ScoreCalculatorsService,
+    pub seasons_service: SeasonsService,
+    pub groups_service: GroupsService,
+    pub group_participation_service: GroupParticipationService,
+    pub competitions_service: CompetitionsService,
+    pub season_competitions_service: SeasonCompetitionsService,
+    pub teams_service: TeamsService,
+    pub events_service: EventsService,
+    pub competition_events_service: CompetitionEventsService,
+    pub scores_service: ScoresService,
 }
 
 pub async fn ping(request: String) -> String {
@@ -55,6 +72,16 @@ pub async fn main() {
         audit_service: AuditService::new(database.clone()),
         auth_service: AuthService::new(database.clone()),
         users_service: UsersService::new(database.clone()),
+        score_calculators_service: ScoreCalculatorsService::new(database.clone()),
+        seasons_service: SeasonsService::new(database.clone()),
+        groups_service: GroupsService::new(database.clone()),
+        group_participation_service: GroupParticipationService::new(database.clone()),
+        competitions_service: CompetitionsService::new(database.clone()),
+        season_competitions_service: SeasonCompetitionsService::new(database.clone()),
+        teams_service: TeamsService::new(database.clone()),
+        events_service: EventsService::new(database.clone()),
+        competition_events_service: CompetitionEventsService::new(database.clone()),
+        scores_service: ScoresService::new(database.clone()),
         database,
         config: config.clone(),
     });

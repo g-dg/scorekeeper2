@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS "sessions" (
 CREATE INDEX IF NOT EXISTS "index__sessions__user_id" ON "sessions" ("user_id");
 
 
-CREATE TABLE IF NOT EXISTS "season_score_calculators" (
+CREATE TABLE IF NOT EXISTS "score_calculators" (
     "id" BLOB PRIMARY KEY NOT NULL DEFAULT (randomblob(16)),
     "name" TEXT NOT NULL UNIQUE,
     "description" TEXT NOT NULL DEFAULT "",
@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS "seasons" (
     "id" BLOB PRIMARY KEY NOT NULL DEFAULT (randomblob(16)),
     "name" TEXT NOT NULL UNIQUE,
     "description" TEXT NOT NULL DEFAULT "",
-    "score_calculator" BLOB REFERENCES "season_score_calculators" ("id"),
+    "score_calculator" BLOB REFERENCES "score_calculators" ("id"),
     "enabled" INTEGER NOT NULL DEFAULT 1
 );
 
@@ -58,20 +58,12 @@ CREATE TABLE IF NOT EXISTS "competitions" (
     "enabled" INTEGER NOT NULL DEFAULT 1
 );
 
-CREATE TABLE IF NOT EXISTS "competition_score_calculators" (
-    "id" BLOB PRIMARY KEY NOT NULL DEFAULT (randomblob(16)),
-    "name" TEXT NOT NULL UNIQUE,
-    "description" TEXT NOT NULL DEFAULT "",
-    "script" TEXT NOT NULL,
-    "config_options" TEXT NOT NULL
-);
-
 CREATE TABLE IF NOT EXISTS "season_competitions" (
     "id" BLOB PRIMARY KEY NOT NULL DEFAULT (randomblob(16)),
     "season_id" BLOB NOT NULL REFERENCES "seasons" ("id"),
     "competition_id" BLOB NOT NULL REFERENCES "competitions" ("id"),
     "description" TEXT NOT NULL DEFAULT "",
-    "score_calculator" BLOB REFERENCES "competition_score_calculators" ("id"),
+    "score_calculator" BLOB REFERENCES "score_calculators" ("id"),
     "enabled" INTEGER NOT NULL DEFAULT 1,
     UNIQUE("season_id", "competition_id")
 );
@@ -83,15 +75,6 @@ CREATE TABLE IF NOT EXISTS "teams" (
     "description" TEXT NOT NULL DEFAULT "",
     "enabled" INTEGER NOT NULL DEFAULT 1,
     UNIQUE("group_participation_id", "name")
-);
-
-CREATE TABLE IF NOT EXISTS "event_score_calculators" (
-    "id" BLOB PRIMARY KEY NOT NULL DEFAULT (randomblob(16)),
-    "name" TEXT NOT NULL UNIQUE,
-    "description" TEXT NOT NULL DEFAULT "",
-    "script" TEXT NOT NULL,
-    "score_fields" TEXT NOT NULL,
-    "config_options" TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS "events" (
@@ -108,7 +91,7 @@ CREATE TABLE IF NOT EXISTS "competition_events" (
     "season_competition_id" BLOB NOT NULL REFERENCES "season_competitions" ("id"),
     "event_id" BLOB NOT NULL REFERENCES "events" ("id"),
     "description" TEXT NOT NULL DEFAULT "",
-    "score_calculator" BLOB REFERENCES "event_score_calculators" ("id"),
+    "score_calculator" BLOB REFERENCES "score_calculators" ("id"),
     "enabled" INTEGER NOT NULL DEFAULT 1,
     "score_type" TEXT NOT NULL DEFAULT 'team',
     "score_config" TEXT NOT NULL,
