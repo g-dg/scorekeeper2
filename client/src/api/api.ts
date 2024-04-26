@@ -46,7 +46,7 @@ export async function api(
 
   // go to login page if unauthorized
   if (response.status == 401) {
-    await router.push({ name: "login" });
+    await router.push({ name: "logout" });
   }
 
   if (response.ok) {
