@@ -106,7 +106,7 @@ CREATE TABLE IF NOT EXISTS "group_scores" (
     "timestamp" TEXT NOT NULL DEFAULT (strftime('%Y-%m-%d %H:%M:%f+00:00')),
     "valid" INTEGER NOT NULL DEFAULT 1,
     "disqualified" INTEGER NOT NULL DEFAULT 0,
-    "notes" TEXT NOT NULL DEFAULT ""
+    "notes" TEXT
 );
 CREATE INDEX IF NOT EXISTS "index__group_scores__competition_event_id__group_participation_id" ON "group_scores" ("competition_event_id", "group_participation_id");
 
@@ -118,7 +118,7 @@ CREATE TABLE IF NOT EXISTS "team_scores" (
     "timestamp" TEXT NOT NULL DEFAULT (strftime('%Y-%m-%d %H:%M:%f+00:00')),
     "valid" INTEGER NOT NULL DEFAULT 1,
     "disqualified" INTEGER NOT NULL DEFAULT 0,
-    "notes" TEXT NOT NULL DEFAULT ""
+    "notes" TEXT
 );
 CREATE INDEX IF NOT EXISTS "index__team_scores__competition_event_id__team_id" ON "team_scores" ("competition_event_id", "team_id");
 

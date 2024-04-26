@@ -40,7 +40,7 @@ pub struct Score {
     pub timestamp: DateTime<Utc>,
     pub valid: bool,
     pub disqualified: bool,
-    pub notes: String,
+    pub notes: Option<String>,
 }
 impl Score {
     pub const UNION_SELECT: &'static str =
