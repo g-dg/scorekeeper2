@@ -6,11 +6,11 @@ use crate::{
     helpers::errors::GenericError,
 };
 
-pub struct GroupParticipationService {
+pub struct GroupParticipationsService {
     db: Database,
 }
 
-impl GroupParticipationService {
+impl GroupParticipationsService {
     pub fn new(database: Database) -> Self {
         Self { db: database }
     }

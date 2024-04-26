@@ -33,7 +33,7 @@ pub async fn list_group_participations(
         return AuthToken::failure_response();
     };
 
-    let result = state.group_participation_service.list();
+    let result = state.group_participations_service.list();
 
     Json(result).into_response()
 }
@@ -47,7 +47,7 @@ pub async fn get_group_participation(
         return AuthToken::failure_response();
     };
 
-    let result = state.group_participation_service.get(id);
+    let result = state.group_participations_service.get(id);
 
     match result {
         Some(result) => Json(result).into_response(),
@@ -64,7 +64,7 @@ pub async fn create_group_participation(
         return AuthToken::failure_response();
     };
 
-    let result = state.group_participation_service.create(&request);
+    let result = state.group_participations_service.create(&request);
 
     state.audit_service.log_data(
         Some(current_user.id),
@@ -92,7 +92,7 @@ pub async fn update_group_participation(
         return AuthToken::failure_response();
     };
 
-    let result = state.group_participation_service.update(&request);
+    let result = state.group_participations_service.update(&request);
 
     state.audit_service.log_data(
         Some(current_user.id),
@@ -119,7 +119,7 @@ pub async fn delete_group_participation(
         return AuthToken::failure_response();
     };
 
-    let result = state.group_participation_service.delete(id);
+    let result = state.group_participations_service.delete(id);
 
     state.audit_service.log_data(
         Some(current_user.id),

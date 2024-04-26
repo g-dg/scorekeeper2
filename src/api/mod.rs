@@ -24,10 +24,11 @@ pub fn route() -> Router<Arc<AppState>> {
         .nest("/score_calculators", score_calculators::route())
         .nest("/seasons", seasons::route())
         .nest("/groups", groups::route())
-        .nest("/group_participation", group_participation::route())
+        .nest("/group_participations", group_participation::route())
         .nest("/competitions", competitions::route())
         .nest("/season_competitions", season_competitions::route())
         .nest("/teams", teams::route())
         .nest("/events", events::route())
         .nest("/competition_events", competition_events::route())
+        .nest("/scores", scores::route())
 }
