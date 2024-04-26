@@ -51,6 +51,11 @@ const router = createRouter({
       props: false,
       component: () => import("@/components/users/UserEdit.vue"),
     },
+    {
+      name: "setup",
+      path: "/setup",
+      component: () => import("@/views/SetupView.vue"),
+    },
   ],
 });
 
