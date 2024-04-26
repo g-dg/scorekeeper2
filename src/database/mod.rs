@@ -80,26 +80,31 @@ impl Database {
 
             let user_service = UsersService::new(db.clone());
 
-            let user_id = user_service
-                .create(&User {
-                    id: None,
-                    username: String::from(DEFAULT_ADMIN_USER_NAME),
-                    new_password: Some(String::from(DEFAULT_ADMIN_USER_PASSWORD)),
-                    description: String::new(),
-                    enabled: true,
-                    permissions: UserPermission::MODIFY_SELF | UserPermission::USER_ADMIN,
-                    permission_modify_self: true,
-                    permission_user_admin: true,
-                    permission_setup_admin: false,
-                    permission_view_results: false,
-                    permission_view_scores: false,
-                    permission_enter_scores: false,
-                    permission_view_registration: false,
-                    permission_enter_registration: false,
-                })
-                .expect("Error occurred creating default admin user");
+            if user_service
+                .get_user_by_name(DEFAULT_ADMIN_USER_NAME)
+                .is_none()
+            {
+                let user_id = user_service
+                    .create(&User {
+                        id: None,
+                        username: String::from(DEFAULT_ADMIN_USER_NAME),
+                        new_password: Some(String::from(DEFAULT_ADMIN_USER_PASSWORD)),
+                        description: String::new(),
+                        enabled: true,
+                        permissions: UserPermission::MODIFY_SELF | UserPermission::USER_ADMIN,
+                        permission_modify_self: true,
+                        permission_user_admin: true,
+                        permission_setup_admin: false,
+                        permission_view_results: false,
+                        permission_view_scores: false,
+                        permission_enter_scores: false,
+                        permission_view_registration: false,
+                        permission_enter_registration: false,
+                    })
+                    .expect("Error occurred creating default admin user");
 
-            audit_service.log_data(None, "default_user_created", json!({"user_id": user_id}));
+                audit_service.log_data(None, "default_user_created", json!({"user_id": user_id}));
+            }
         }
 
         db
