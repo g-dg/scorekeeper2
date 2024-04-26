@@ -11,9 +11,8 @@ const password = ref("");
 
 const loading = ref(false);
 async function login() {
+  loading.value = true;
   try {
-    loading.value = true;
-
     const result = await AuthClient.login(username.value, password.value);
 
     if (result) {
@@ -25,9 +24,11 @@ async function login() {
       alert("Login Failed.");
       password.value = "";
     }
-  } finally {
-    loading.value = false;
+  } catch (e) {
+    console.error(e);
+    alert("Error occurred logging in");
   }
+  loading.value = false;
 }
 
 onMounted(() => {

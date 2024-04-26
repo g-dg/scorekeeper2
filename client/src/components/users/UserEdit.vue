@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { UserClient, UserPermission, type User } from "@/api/users";
+import { UsersClient, UserPermission, type User } from "@/api/users";
 import clone from "@/helpers/clone";
 import router from "@/router";
 import { useAuthStore } from "@/stores/auth";
@@ -48,20 +48,18 @@ async function loadUser() {
     blankPassword.value = false;
   } else {
     // existing user
+    loading.value++;
     try {
-      loading.value++;
-
-      user.value = await UserClient.getUser(props.id);
+      user.value = await UsersClient.getUser(props.id);
 
       password.value = "";
       passwordConfirm.value = "";
       blankPassword.value = false;
     } catch (e) {
+      console.error(e);
       alert("Error occurred loading user");
-      throw e;
-    } finally {
-      loading.value--;
     }
+    loading.value--;
   }
 }
 onMounted(loadUser);
@@ -75,17 +73,15 @@ async function createUser() {
     return;
   }
 
+  loading.value++;
   try {
-    loading.value++;
-
-    await UserClient.createUser(user.value);
-  } catch (e) {
-    alert("Error occurred creating user");
-    throw e;
-  } finally {
+    await UsersClient.createUser(user.value);
     await router.push({ name: "user_list" });
-    loading.value--;
+  } catch (e) {
+    console.error(e);
+    alert("Error occurred creating user");
   }
+  loading.value--;
 }
 
 async function updateUser() {
@@ -100,38 +96,36 @@ async function updateUser() {
     user.value.new_password = null;
   }
 
+  loading.value++;
   try {
-    loading.value++;
-    await UserClient.updateUser(userId.value!, user.value);
+    await UsersClient.updateUser(userId.value!, user.value);
   } catch (e) {
+    console.error(e);
     alert("Error occurred updating user");
-    throw e;
-  } finally {
-    await loadUser();
-
-    // update user in auth store if editing the current user
-    if (userId.value == currentUserId.value) {
-      let authUser = clone(user.value);
-      authUser.new_password = null;
-      authStore.user = authUser;
-    }
-
-    loading.value--;
   }
+  await loadUser();
+
+  // update user in auth store if editing the current user
+  if (userId.value == currentUserId.value) {
+    let authUser = clone(user.value);
+    authUser.new_password = null;
+    authStore.user = authUser;
+  }
+
+  loading.value--;
 }
 
 async function deleteUser() {
   if (confirm(`Really delete user "${user.value.username}"?`)) {
+    loading.value++;
     try {
-      loading.value++;
-      await UserClient.deleteUser(userId.value!);
+      await UsersClient.deleteUser(userId.value!);
     } catch (e) {
+      console.error(e);
       alert("Error occurred deleting user");
-      throw e;
-    } finally {
-      await router.push({ name: "user_list" });
-      loading.value--;
     }
+    await router.push({ name: "user_list" });
+    loading.value--;
   }
 }
 
@@ -139,16 +133,15 @@ async function invalidateSessions() {
   if (
     confirm(`Really invalidate sessions for user "${user.value.username}"?`)
   ) {
+    loading.value++;
     try {
-      loading.value++;
-      await UserClient.invalidateSessions(userId.value!);
+      await UsersClient.invalidateSessions(userId.value!);
     } catch (e) {
+      console.error(e);
       alert("Error occurred invalidating sessions");
-      throw e;
-    } finally {
-      await loadUser();
-      loading.value--;
     }
+    await loadUser();
+    loading.value--;
   }
 }
 </script>
@@ -304,9 +297,7 @@ async function invalidateSessions() {
       >
         Delete
       </button>
-      <button v-if="userId != null" @click="invalidateSessions">
-        Logout
-      </button>
+      <button v-if="userId != null" @click="invalidateSessions">Logout</button>
     </form>
     <em v-else>Loading...</em>
   </main>

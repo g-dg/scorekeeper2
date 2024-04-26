@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { UserClient, UserPermission, type User } from "@/api/users";
+import { UsersClient } from "@/api/users";
 import { useAuthStore } from "@/stores/auth";
-import { computed, onMounted, ref } from "vue";
+import { computed, ref } from "vue";
 
 const authStore = useAuthStore();
 const currentUserId = computed(() => authStore.user!.id!);
@@ -13,26 +13,24 @@ const message = ref("");
 
 const changingPassword = ref(false);
 async function changePassword() {
+  message.value = "";
+  changingPassword.value = true;
   try {
-    message.value = "";
-    changingPassword.value = true;
-
     if (new_password.value !== new_password_confirm.value) {
       alert("Passwords do not match.");
       return;
     }
 
-    await UserClient.changePassword(currentUserId.value, new_password.value);
+    await UsersClient.changePassword(currentUserId.value, new_password.value);
 
     new_password.value = "";
     new_password_confirm.value = "";
     message.value = "Password has been changed";
   } catch (e) {
+    console.error(e);
     alert("Error occurred changing password");
-    throw e;
-  } finally {
-    changingPassword.value = false;
   }
+  changingPassword.value = false;
 }
 </script>
 
@@ -40,7 +38,10 @@ async function changePassword() {
   <main>
     <h1>My Account</h1>
 
-    <form v-if="authStore.user?.permission_modify_self" @submit.prevent="changePassword">
+    <form
+      v-if="authStore.user?.permission_modify_self"
+      @submit.prevent="changePassword"
+    >
       Change Password:
       <input
         v-model="new_password"

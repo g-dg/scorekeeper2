@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { UserClient, type User } from "@/api/users";
+import { UsersClient, type User } from "@/api/users";
 import { natcasecmp } from "@/helpers/sort";
 import { useAuthStore } from "@/stores/auth";
 import { computed, onMounted, ref } from "vue";
@@ -12,17 +12,16 @@ const users = ref<User[] | null>(null);
 const loading = ref(0);
 
 async function loadUsers() {
+  loading.value++;
   try {
-    loading.value++;
-    users.value = (await UserClient.listUsers()).sort((a, b) =>
-      natcasecmp(a.username, b.username)
+    users.value = (await UsersClient.listUsers()).sort((a, b) =>
+      natcasecmp([a.username, b.username])
     );
   } catch (e) {
+    console.error(e);
     alert("Error occurred loading users");
-    throw e;
-  } finally {
-    loading.value--;
   }
+  loading.value--;
 }
 onMounted(loadUsers);
 </script>
