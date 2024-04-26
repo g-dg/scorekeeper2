@@ -123,7 +123,7 @@ CREATE TABLE IF NOT EXISTS "team_scores" (
 CREATE INDEX IF NOT EXISTS "index__team_scores__competition_event_id__team_id" ON "team_scores" ("competition_event_id", "team_id");
 
 
-CREATE TABLE IF NOT EXISTS "audit" (
+CREATE TABLE IF NOT EXISTS "log" (
     "id" BLOB PRIMARY KEY NOT NULL DEFAULT (randomblob(16)),
     "user_id" BLOB,
     "timestamp" TEXT NOT NULL DEFAULT (strftime('%Y-%m-%d %H:%M:%f+00:00')),

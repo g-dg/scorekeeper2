@@ -43,7 +43,7 @@ impl AuditService {
             serde_json::to_string(&data).expect("Error occurred serializing audit event data")
         });
 
-        db.prepare_cached("INSERT INTO \"audit\" (\"id\", \"user_id\", \"timestamp\", \"action\", \"data\") VALUES (:id, :user_id, :timestamp, :action, :data);")
+        db.prepare_cached("INSERT INTO \"log\" (\"id\", \"user_id\", \"timestamp\", \"action\", \"data\") VALUES (:id, :user_id, :timestamp, :action, :data);")
             .unwrap()
             .execute(named_params! {
                 ":id": entry_id,
