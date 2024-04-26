@@ -69,5 +69,5 @@ fn default_static_file_index() -> String {
     String::from("index.html")
 }
 fn default_enable_api_request_logging() -> bool {
-    true
+    false
 }
