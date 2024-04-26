@@ -29,19 +29,20 @@ export class UserPermission {
   static REGISTRATION_ENTRY = 1 << 7;
 }
 
-export class UserClient {
+export class UsersClient {
   static async listUsers(): Promise<User[]> {
-    let response = await api("users", "GET");
+    const response = await api("users", "GET");
     return response as User[];
   }
 
-  static async createUser(user: User): Promise<void> {
-    await api("users", "POST", user);
+  static async getUser(user_id: string): Promise<User> {
+    const response = await api(`users/${encodeURIComponent(user_id)}`, "GET");
+    return response as User;
   }
 
-  static async getUser(user_id: string): Promise<User> {
-    let response = await api(`users/${encodeURIComponent(user_id)}`, "GET");
-    return response as User;
+  static async createUser(user: User): Promise<string> {
+    const response = await api("users", "POST", user);
+    return response as string;
   }
 
   static async updateUser(user_id: string, user: User): Promise<void> {
