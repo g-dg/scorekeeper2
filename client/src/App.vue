@@ -7,6 +7,8 @@ const authStore = useAuthStore();
 
 const isAuthenticated = computed(() => authStore.isAuthenticated);
 const user = computed(() => authStore.user);
+
+const clientVersion = __APP_VERSION__;
 </script>
 
 <template>
@@ -36,8 +38,16 @@ const user = computed(() => authStore.user);
       </nav>
     </header>
 
-    <RouterView />
+    <main>
+      <RouterView />
+    </main>
+
+    <footer>ScoreKeeper2 Copyright &copy; 2024 Garnet DeGelder</footer>
   </div>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+footer {
+  margin-top: 2em;
+}
+</style>

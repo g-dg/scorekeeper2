@@ -22,7 +22,7 @@ async function loadVersion() {
 }
 onMounted(loadVersion);
 
-const clientVersion = ref<string>(__APP_VERSION__);
+const clientVersion = __APP_VERSION__;
 </script>
 
 <template>
