@@ -10,32 +10,34 @@ const user = computed(() => authStore.user);
 </script>
 
 <template>
-  <header>
-    <nav v-if="isAuthenticated">
-      <ul>
-        <li>
-          <RouterLink :to="{ name: 'home' }">Home</RouterLink>
-        </li>
-        <li v-if="user?.permission_setup_admin">
-          <RouterLink :to="{ name: 'setup' }">Setup</RouterLink>
-        </li>
-        <li v-if="user?.permission_user_admin">
-          <RouterLink :to="{ name: 'user_list' }">Users</RouterLink>
-        </li>
-        <li v-if="user?.permission_modify_self">
-          <RouterLink :to="{ name: 'account' }">Account</RouterLink>
-        </li>
-        <li>
-          <RouterLink :to="{ name: 'about' }">About</RouterLink>
-        </li>
-        <li>
-          <RouterLink :to="{ name: 'logout' }">Logout</RouterLink>
-        </li>
-      </ul>
-    </nav>
-  </header>
+  <div>
+    <header>
+      <nav v-if="isAuthenticated">
+        <ul>
+          <li>
+            <RouterLink :to="{ name: 'home' }">Home</RouterLink>
+          </li>
+          <li v-if="user?.permission_setup_admin">
+            <RouterLink :to="{ name: 'setup' }">Setup</RouterLink>
+          </li>
+          <li v-if="user?.permission_user_admin">
+            <RouterLink :to="{ name: 'user_list' }">Users</RouterLink>
+          </li>
+          <li v-if="user?.permission_modify_self">
+            <RouterLink :to="{ name: 'account' }">Account</RouterLink>
+          </li>
+          <li>
+            <RouterLink :to="{ name: 'about' }">About</RouterLink>
+          </li>
+          <li>
+            <RouterLink :to="{ name: 'logout' }">Logout</RouterLink>
+          </li>
+        </ul>
+      </nav>
+    </header>
 
-  <RouterView />
+    <RouterView />
+  </div>
 </template>
 
 <style lang="scss" scoped></style>
