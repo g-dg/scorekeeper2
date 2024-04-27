@@ -111,12 +111,7 @@ async function remove() {
 
 <template>
   <form v-if="loading == 0" @submit.prevent>
-    <template v-if="seasonCompetition.id != null">
-      ID: <code>{{ seasonCompetition.id }}</code>
-      <br />
-    </template>
-
-    <label>Season: </label>
+    <label> Season: </label>
     <select v-model="seasonCompetition.season_id">
       <option value=""></option>
       <option
@@ -128,9 +123,7 @@ async function remove() {
       </option>
     </select>
 
-    <br />
-
-    <label>Competition: </label>
+    <label> Competition: </label>
     <select v-model="seasonCompetition.competition_id">
       <option value=""></option>
       <option
@@ -142,14 +135,10 @@ async function remove() {
       </option>
     </select>
 
-    <br />
-
-    <label>Description: </label>
+    <label> Description: </label>
     <textarea v-model="seasonCompetition.description"></textarea>
 
-    <br />
-
-    <label>Score Calculator: </label>
+    <label> Score Calculator: </label>
     <select v-model="seasonCompetition.score_calculator">
       <option :value="null"></option>
       <option
@@ -160,12 +149,8 @@ async function remove() {
       </option>
     </select>
 
-    <br />
-
-    <label>Enabled: </label>
+    <label> Enabled: </label>
     <input v-model="seasonCompetition.enabled" type="checkbox" />
-
-    <br />
 
     <button v-if="seasonCompetition.id == null" @click="create" type="submit">
       Create
@@ -174,6 +159,11 @@ async function remove() {
       Update
     </button>
     <button v-if="seasonCompetition.id != null" @click="remove">Delete</button>
+
+    <template v-if="seasonCompetition.id != null">
+      ID: <code>{{ seasonCompetition.id }}</code>
+      <br />
+    </template>
   </form>
 </template>
 

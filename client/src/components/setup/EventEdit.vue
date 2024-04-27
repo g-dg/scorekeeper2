@@ -88,12 +88,7 @@ async function remove() {
 
 <template>
   <form v-if="loading == 0" @submit.prevent>
-    <template v-if="event.id != null">
-      ID: <code>{{ event.id }}</code>
-      <br />
-    </template>
-
-    <label>Competition: </label>
+    <label> Competition: </label>
     <select v-model="event.competition_id">
       <option :value="null"></option>
       <option v-for="competition in competitions" :value="competition.id">
@@ -101,22 +96,14 @@ async function remove() {
       </option>
     </select>
 
-    <br />
-
-    <label>Name: </label>
+    <label> Name: </label>
     <input v-model="event.name" type="text" />
 
-    <br />
-
-    <label>Description: </label>
+    <label> Description: </label>
     <textarea v-model="event.description"></textarea>
 
-    <br />
-
-    <label>Enabled: </label>
+    <label> Enabled: </label>
     <input v-model="event.enabled" type="checkbox" />
-
-    <br />
 
     <button v-if="event.id == null" @click="create" type="submit">
       Create
@@ -125,6 +112,11 @@ async function remove() {
       Update
     </button>
     <button v-if="event.id != null" @click="remove">Delete</button>
+
+    <template v-if="event.id != null">
+      ID: <code>{{ event.id }}</code>
+      <br />
+    </template>
   </form>
 </template>
 

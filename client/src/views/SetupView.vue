@@ -64,7 +64,6 @@ async function loadScoreCalculators() {
   }
   loading.value--;
 }
-const showScoreCalculators = ref(false);
 const filteredScoreCalculator = ref<string | null>(null);
 watch(scoreCalculatorsFiltered, () => {
   filteredScoreCalculator.value = !scoreCalculatorsFiltered.value.some(
@@ -108,7 +107,6 @@ async function loadSeasons() {
   }
   loading.value--;
 }
-const showSeasons = ref(false);
 const filteredSeason = ref<string | null>(null);
 watch(seasonsFiltered, () => {
   filteredSeason.value = !seasonsFiltered.value.some(
@@ -149,7 +147,6 @@ async function loadCompetitions() {
   }
   loading.value--;
 }
-const showCompetitions = ref(false);
 const filteredCompetition = ref<string | null>(null);
 watch(competitionsFiltered, () => {
   filteredCompetition.value = !competitionsFiltered.value.some(
@@ -212,7 +209,6 @@ async function loadSeasonCompetitions() {
   }
   loading.value--;
 }
-const showSeasonCompetitions = ref(false);
 const filteredSeasonCompetition = ref<string | null>(null);
 watch(seasonCompetitionsFiltered, () => {
   filteredSeasonCompetition.value = !seasonCompetitionsFiltered.value.some(
@@ -253,7 +249,6 @@ async function loadEvents() {
   }
   loading.value--;
 }
-const showEvents = ref(false);
 const filteredEvent = ref<string | null>(null);
 watch(eventsFiltered, () => {
   filteredEvent.value = !eventsFiltered.value.some(
@@ -339,7 +334,6 @@ async function loadCompetitionEvents() {
   }
   loading.value--;
 }
-const showCompetitionEvents = ref(false);
 const filteredCompetitionEvent = ref<string | null>(null);
 watch(competitionEventsFiltered, () => {
   filteredCompetitionEvent.value = !competitionEventsFiltered.value.some(
@@ -376,7 +370,6 @@ async function loadGroups() {
   }
   loading.value--;
 }
-const showGroups = ref(false);
 const filteredGroup = ref<string | null>(null);
 watch(groupsFiltered, () => {
   filteredGroup.value = !groupsFiltered.value.some(
@@ -437,7 +430,6 @@ async function loadGroupParticipations() {
   }
   loading.value--;
 }
-const showGroupParticipations = ref(false);
 const filteredGroupParticipation = ref<string | null>(null);
 watch(groupParticipationsFiltered, () => {
   filteredGroupParticipation.value = !groupParticipationsFiltered.value.some(
@@ -484,7 +476,6 @@ async function loadTeams() {
   }
   loading.value--;
 }
-const showTeams = ref(false);
 const filteredTeam = ref<string | null>(null);
 watch(teamsFiltered, () => {
   filteredTeam.value = !teamsFiltered.value.some(
@@ -523,6 +514,15 @@ function clearFilters() {
   filteredCompetitionEvent.value = null;
 }
 
+const showScoreCalculators = ref(true);
+const showSeasons = ref(true);
+const showCompetitions = ref(true);
+const showSeasonCompetitions = ref(true);
+const showEvents = ref(true);
+const showCompetitionEvents = ref(true);
+const showGroups = ref(true);
+const showGroupParticipations = ref(true);
+const showTeams = ref(true);
 function setVisibility(visibility: boolean) {
   showScoreCalculators.value = visibility;
   showSeasons.value = visibility;
@@ -536,6 +536,7 @@ function setVisibility(visibility: boolean) {
 }
 
 const showCreateForms = ref(true);
+const showHeadings = ref(false);
 </script>
 
 <template>
@@ -546,8 +547,12 @@ const showCreateForms = ref(true);
 
     <button @click="setVisibility(true)">Show All</button>
     <button @click="setVisibility(false)">Hide All</button>
-    <label> Show Create Forms: </label>
+
+    <label> Show Create Forms:</label>
     <input v-model="showCreateForms" type="checkbox" />
+
+    <label> Show Headings:</label>
+    <input v-model="showHeadings" type="checkbox" />
 
     <br />
 
@@ -699,20 +704,20 @@ const showCreateForms = ref(true);
     <template v-if="showScoreCalculators">
       <template v-if="showCreateForms">
         <ScoreCalculatorEdit @update="loadScoreCalculators" />
-        <hr />
       </template>
       <template
         v-for="scoreCalculator in scoreCalculatorsFilteredSelf"
         :key="scoreCalculator.id ?? ''"
       >
-        <h2>{{ scoreCalculator.name }}</h2>
+        <h2 v-if="showHeadings">{{ scoreCalculator.name }}</h2>
         <ScoreCalculatorEdit
           :score-calculator="scoreCalculator"
           @update="loadScoreCalculators"
         />
-        <hr />
       </template>
     </template>
+
+    <hr />
 
     <h1>Seasons</h1>
     <button @click="showSeasons = !showSeasons">Show/Hide</button>
@@ -723,18 +728,18 @@ const showCreateForms = ref(true);
           :score-calculators="scoreCalculatorsFilteredSelf"
           @update="loadSeasons"
         />
-        <hr />
       </template>
       <template v-for="season in seasonsFilteredSelf" :key="season.id ?? ''">
-        <h2>{{ season.name }}</h2>
+        <h2 v-if="showHeadings">{{ season.name }}</h2>
         <SeasonEdit
           :season="season"
           :score-calculators="scoreCalculatorsFilteredSelf"
           @update="loadSeasons"
         />
-        <hr />
       </template>
     </template>
+
+    <hr />
 
     <h1>Competitions</h1>
     <button @click="showCompetitions = !showCompetitions">Show/Hide</button>
@@ -742,22 +747,22 @@ const showCreateForms = ref(true);
     <template v-if="showCompetitions">
       <template v-if="showCreateForms">
         <CompetitionEdit @update="loadCompetitions" />
-        <hr />
       </template>
       <template
         v-for="competition in competitionsFilteredSelf"
         :key="competition.id ?? ''"
       >
-        <h2>
+        <h2 v-if="showHeadings">
           {{ competition.name }}
         </h2>
         <CompetitionEdit
           :competition="competition"
           @update="loadCompetitions"
         />
-        <hr />
       </template>
     </template>
+
+    <hr />
 
     <h1>Season Competitions</h1>
     <button @click="showSeasonCompetitions = !showSeasonCompetitions">
@@ -772,13 +777,12 @@ const showCreateForms = ref(true);
           :score-calculators="scoreCalculatorsFilteredSelf"
           @update="loadSeasonCompetitions"
         />
-        <hr />
       </template>
       <template
         v-for="seasonCompetition in seasonCompetitionsFilteredSelf"
         :key="seasonCompetition.id ?? ''"
       >
-        <h2>
+        <h2 v-if="showHeadings">
           {{ seasonsById.get(seasonCompetition.season_id)?.name }} -
           {{ competitionsById.get(seasonCompetition.competition_id)?.name }}
         </h2>
@@ -789,9 +793,10 @@ const showCreateForms = ref(true);
           :score-calculators="scoreCalculatorsFilteredSelf"
           @update="loadSeasonCompetitions"
         />
-        <hr />
       </template>
     </template>
+
+    <hr />
 
     <h1>Events</h1>
     <button @click="showEvents = !showEvents">Show/Hide</button>
@@ -802,18 +807,18 @@ const showCreateForms = ref(true);
           :competitions="competitionsFilteredSelf"
           @update="loadEvents"
         />
-        <hr />
       </template>
       <template v-for="event in eventsFilteredSelf" :key="event.id ?? ''">
-        <h2>{{ event.name }}</h2>
+        <h2 v-if="showHeadings">{{ event.name }}</h2>
         <EventEdit
           :event="event"
           :competitions="competitionsFilteredSelf"
           @update="loadEvents"
         />
-        <hr />
       </template>
     </template>
+
+    <hr />
 
     <h1>Competition Events</h1>
     <button @click="showCompetitionEvents = !showCompetitionEvents">
@@ -831,13 +836,12 @@ const showCreateForms = ref(true);
           :competition-map="competitionsById"
           @update="loadCompetitionEvents"
         />
-        <hr />
       </template>
       <template
         v-for="competitionEvent in competitionEventsFilteredSelf"
         :key="competitionEvent.id ?? ''"
       >
-        <h2>
+        <h2 v-if="showHeadings">
           {{
             seasonsById.get(
               seasonCompetitionsById.get(competitionEvent.season_competition_id)
@@ -864,9 +868,10 @@ const showCreateForms = ref(true);
           :competition-map="competitionsById"
           @update="loadCompetitionEvents"
         />
-        <hr />
       </template>
     </template>
+
+    <hr />
 
     <h1>Groups</h1>
     <button @click="showGroups = !showGroups">Show/Hide</button>
@@ -874,14 +879,14 @@ const showCreateForms = ref(true);
     <template v-if="showGroups">
       <template v-if="showCreateForms">
         <GroupEdit @update="loadGroups" />
-        <hr />
       </template>
       <template v-for="group in groupsFilteredSelf" :key="group.id ?? ''">
-        <h2>{{ group.name }}</h2>
+        <h2 v-if="showHeadings">{{ group.name }}</h2>
         <GroupEdit :group="group" @update="loadGroups" />
-        <hr />
       </template>
     </template>
+
+    <hr />
 
     <h1>Group Participations</h1>
     <button @click="showGroupParticipations = !showGroupParticipations">
@@ -895,13 +900,12 @@ const showCreateForms = ref(true);
           :groups="groupsFilteredSelf"
           @update="loadGroupParticipations"
         />
-        <hr />
       </template>
       <template
         v-for="groupParticipation in groupParticipationsFilteredSelf"
         :key="groupParticipation.id ?? ''"
       >
-        <h2>
+        <h2 v-if="showHeadings">
           {{ seasonsById.get(groupParticipation.season_id)?.name }} -
           {{ groupsById.get(groupParticipation.group_id)?.name }}
         </h2>
@@ -911,9 +915,10 @@ const showCreateForms = ref(true);
           :groups="groupsFilteredSelf"
           @update="loadGroupParticipations"
         />
-        <hr />
       </template>
     </template>
+
+    <hr />
 
     <h1>Teams</h1>
     <button @click="showTeams = !showTeams">Show/Hide</button>
@@ -927,10 +932,9 @@ const showCreateForms = ref(true);
           :group-map="groupsById"
           @update="loadTeams"
         />
-        <hr />
       </template>
       <template v-for="team in teamsFilteredSelf" :key="team.id ?? ''">
-        <h2>
+        <h2 v-if="showHeadings">
           {{
             seasonsById.get(
               groupParticipationsById.get(team.group_participation_id)
@@ -955,7 +959,6 @@ const showCreateForms = ref(true);
           :group-map="groupsById"
           @update="loadTeams"
         />
-        <hr />
       </template>
     </template>
   </div>

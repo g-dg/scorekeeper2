@@ -82,25 +82,14 @@ async function remove() {
 
 <template>
   <form v-if="loading == 0" @submit.prevent>
-    <template v-if="group.id != null">
-      ID: <code>{{ group.id }}</code>
-      <br />
-    </template>
-
-    <label>Name: </label>
+    <label> Name: </label>
     <input v-model="group.name" type="text" />
 
-    <br />
-
-    <label>Description: </label>
+    <label> Description: </label>
     <textarea v-model="group.description"></textarea>
 
-    <br />
-
-    <label>Enabled: </label>
+    <label> Enabled: </label>
     <input v-model="group.enabled" type="checkbox" />
-
-    <br />
 
     <button v-if="group.id == null" @click="create" type="submit">
       Create
@@ -109,6 +98,11 @@ async function remove() {
       Update
     </button>
     <button v-if="group.id != null" @click="remove">Delete</button>
+
+    <template v-if="group.id != null">
+      ID: <code>{{ group.id }}</code>
+      <br />
+    </template>
   </form>
 </template>
 

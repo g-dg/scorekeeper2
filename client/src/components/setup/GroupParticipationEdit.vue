@@ -121,12 +121,7 @@ async function remove() {
 
 <template>
   <form v-if="loading == 0" @submit.prevent>
-    <template v-if="groupParticipation.id != null">
-      ID: <code>{{ groupParticipation.id }}</code>
-      <br />
-    </template>
-
-    <label>Group: </label>
+    <label> Group: </label>
     <select v-model="groupParticipation.group_id">
       <option value=""></option>
       <option v-for="group in groups" :key="group.id ?? ''" :value="group.id">
@@ -134,9 +129,7 @@ async function remove() {
       </option>
     </select>
 
-    <br />
-
-    <label>Season: </label>
+    <label> Season: </label>
     <select v-model="groupParticipation.season_id">
       <option value=""></option>
       <option
@@ -148,17 +141,11 @@ async function remove() {
       </option>
     </select>
 
-    <br />
-
-    <label>Description: </label>
+    <label> Description: </label>
     <textarea v-model="groupParticipation.description"></textarea>
 
-    <br />
-
-    <label>Enabled: </label>
+    <label> Enabled: </label>
     <input v-model="groupParticipation.enabled" type="checkbox" />
-
-    <br />
 
     <button v-if="groupParticipation.id == null" @click="create" type="submit">
       Create
@@ -167,6 +154,11 @@ async function remove() {
       Update
     </button>
     <button v-if="groupParticipation.id != null" @click="remove">Delete</button>
+
+    <template v-if="groupParticipation.id != null">
+      ID: <code>{{ groupParticipation.id }}</code>
+      <br />
+    </template>
   </form>
 </template>
 

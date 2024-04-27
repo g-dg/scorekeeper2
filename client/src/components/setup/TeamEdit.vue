@@ -102,12 +102,7 @@ async function remove() {
 
 <template>
   <form v-if="loading == 0" @submit.prevent>
-    <template v-if="team.id != null">
-      ID: <code>{{ team.id }}</code>
-      <br />
-    </template>
-
-    <label>Group Participation: </label>
+    <label> Group Participation: </label>
     <select v-model="team.group_participation_id">
       <option value=""></option>
       <option
@@ -117,38 +112,37 @@ async function remove() {
       >
         {{
           seasonMap.get(
-            groupParticipationMap.get(groupParticipation.id ?? "")?.season_id ?? ""
+            groupParticipationMap.get(groupParticipation.id ?? "")?.season_id ??
+              ""
           )?.name
         }}
         -
         {{
           groupMap.get(
-            groupParticipationMap.get(groupParticipation.id ?? "")?.group_id ?? ""
+            groupParticipationMap.get(groupParticipation.id ?? "")?.group_id ??
+              ""
           )?.name
         }}
       </option>
     </select>
 
-    <br />
-
-    <label>Name: </label>
+    <label> Name: </label>
     <input v-model="team.name" type="text" />
 
-    <br />
-
-    <label>Description: </label>
+    <label> Description: </label>
     <textarea v-model="team.description"></textarea>
 
-    <br />
-
-    <label>Enabled: </label>
+    <label> Enabled: </label>
     <input v-model="team.enabled" type="checkbox" />
-
-    <br />
 
     <button v-if="team.id == null" @click="create" type="submit">Create</button>
     <button v-if="team.id != null" @click="update" type="submit">Update</button>
     <button v-if="team.id != null" @click="remove">Delete</button>
+
+    <template v-if="team.id != null">
+      ID: <code>{{ team.id }}</code>
+      <br />
+    </template>
   </form>
 </template>
 

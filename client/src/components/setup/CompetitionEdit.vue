@@ -54,7 +54,10 @@ async function create() {
 async function update() {
   selfLoading.value++;
   try {
-    await CompetitionsClient.updateCompetition(competition.value.id!, competition.value);
+    await CompetitionsClient.updateCompetition(
+      competition.value.id!,
+      competition.value
+    );
   } catch (e) {
     console.error(e);
     alert("Error occurred updating competition");
@@ -82,25 +85,14 @@ async function remove() {
 
 <template>
   <form v-if="loading == 0" @submit.prevent>
-    <template v-if="competition.id != null">
-      ID: <code>{{ competition.id }}</code>
-      <br />
-    </template>
-
-    <label>Name: </label>
+    <label> Name: </label>
     <input v-model="competition.name" type="text" />
 
-    <br />
-
-    <label>Description: </label>
+    <label> Description: </label>
     <textarea v-model="competition.description"></textarea>
 
-    <br />
-
-    <label>Enabled: </label>
+    <label> Enabled: </label>
     <input v-model="competition.enabled" type="checkbox" />
-
-    <br />
 
     <button v-if="competition.id == null" @click="create" type="submit">
       Create
@@ -109,6 +101,11 @@ async function remove() {
       Update
     </button>
     <button v-if="competition.id != null" @click="remove">Delete</button>
+
+    <template v-if="competition.id != null">
+      ID: <code>{{ competition.id }}</code>
+      <br />
+    </template>
   </form>
 </template>
 

@@ -88,22 +88,13 @@ async function remove() {
 
 <template>
   <form v-if="loading == 0" @submit.prevent>
-    <template v-if="season.id != null">
-      ID: <code>{{ season.id }}</code>
-      <br />
-    </template>
-
-    <label>Name: </label>
+    <label> Name: </label>
     <input v-model="season.name" type="text" />
 
-    <br />
-
-    <label>Description: </label>
+    <label> Description: </label>
     <textarea v-model="season.description"></textarea>
 
-    <br />
-
-    <label>Score Calculator: </label>
+    <label> Score Calculator: </label>
     <select v-model="season.score_calculator">
       <option :value="null"></option>
       <option
@@ -114,12 +105,8 @@ async function remove() {
       </option>
     </select>
 
-    <br />
-
-    <label>Enabled: </label>
+    <label> Enabled: </label>
     <input v-model="season.enabled" type="checkbox" />
-
-    <br />
 
     <button v-if="season.id == null" @click="create" type="submit">
       Create
@@ -128,6 +115,11 @@ async function remove() {
       Update
     </button>
     <button v-if="season.id != null" @click="remove">Delete</button>
+
+    <template v-if="season.id != null">
+      ID: <code>{{ season.id }}</code>
+      <br />
+    </template>
   </form>
 </template>
 

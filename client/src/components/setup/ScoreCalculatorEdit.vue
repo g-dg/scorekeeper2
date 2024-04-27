@@ -93,30 +93,17 @@ async function remove() {
 
 <template>
   <form v-if="loading == 0" @submit.prevent>
-    <template v-if="scoreCalculator.id != null">
-      ID: <code>{{ scoreCalculator.id }}</code>
-      <br />
-    </template>
-
-    <label>Name: </label>
+    <label> Name: </label>
     <input v-model="scoreCalculator.name" type="text" />
 
-    <br />
-
-    <label>Description: </label>
+    <label> Description: </label>
     <textarea v-model="scoreCalculator.description"></textarea>
 
-    <br />
-
-    <label>Script: </label>
+    <label> Script: </label>
     <textarea v-model="scoreCalculator.script"></textarea>
 
-    <br />
-
-    <label>Config Options: </label>
+    <label> Config Options: </label>
     <textarea v-model="scoreCalculator.config_options"></textarea>
-
-    <br />
 
     <button v-if="scoreCalculator.id == null" @click="create" type="submit">
       Create
@@ -125,6 +112,11 @@ async function remove() {
       Update
     </button>
     <button v-if="scoreCalculator.id != null" @click="remove">Delete</button>
+
+    <template v-if="scoreCalculator.id != null">
+      ID: <code>{{ scoreCalculator.id }}</code>
+      <br />
+    </template>
   </form>
 </template>
 

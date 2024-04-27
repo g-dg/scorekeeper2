@@ -125,12 +125,7 @@ async function remove() {
 
 <template>
   <form v-if="loading == 0" @submit.prevent>
-    <template v-if="competitionEvent.id != null">
-      ID: <code>{{ competitionEvent.id }}</code>
-      <br />
-    </template>
-
-    <label>Season Competition: </label>
+    <label> Season Competition: </label>
     <select v-model="competitionEvent.season_competition_id">
       <option value=""></option>
       <option
@@ -154,9 +149,7 @@ async function remove() {
       </option>
     </select>
 
-    <br />
-
-    <label>Event: </label>
+    <label> Event: </label>
     <select v-model="competitionEvent.event_id">
       <option value=""></option>
       <option v-for="event in events" :key="event.id ?? ''" :value="event.id">
@@ -164,14 +157,10 @@ async function remove() {
       </option>
     </select>
 
-    <br />
-
-    <label>Description: </label>
+    <label> Description: </label>
     <textarea v-model="competitionEvent.description"></textarea>
 
-    <br />
-
-    <label>Score Calculator: </label>
+    <label> Score Calculator: </label>
     <select v-model="competitionEvent.score_calculator">
       <option value=""></option>
       <option
@@ -183,25 +172,17 @@ async function remove() {
       </option>
     </select>
 
-    <br />
-
-    <label>Enabled: </label>
+    <label> Enabled: </label>
     <input v-model="competitionEvent.enabled" type="checkbox" />
 
-    <br />
-
-    <label>Score Type: </label>
+    <label> Score Type: </label>
     <select v-model="competitionEvent.score_type">
       <option value="Group">Group</option>
       <option value="Team">Team</option>
     </select>
 
-    <br />
-
-    <label>Score Config: </label>
+    <label> Score Config: </label>
     <textarea v-model="competitionEvent.score_config"></textarea>
-
-    <br />
 
     <button v-if="competitionEvent.id == null" @click="create" type="submit">
       Create
@@ -210,6 +191,11 @@ async function remove() {
       Update
     </button>
     <button v-if="competitionEvent.id != null" @click="remove">Delete</button>
+
+    <template v-if="competitionEvent.id != null">
+      ID: <code>{{ competitionEvent.id }}</code>
+      <br />
+    </template>
   </form>
 </template>
 
