@@ -2,6 +2,7 @@ import { api } from "./api";
 
 export interface Team {
   id: string | null;
+  group_participation_id: string;
   name: string;
   description: string;
   enabled: boolean;

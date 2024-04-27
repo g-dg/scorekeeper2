@@ -1,6 +1,6 @@
 import { api } from "./api";
 
-export type ScoreType = "group" | "team";
+export type ScoreType = "Group" | "Team";
 
 export interface Score {
   id: string | null;
