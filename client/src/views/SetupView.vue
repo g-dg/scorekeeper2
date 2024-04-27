@@ -120,104 +120,6 @@ watch(seasonsFiltered, () => {
 
 //#endregion
 
-//#region Groups
-
-const groups = ref<Group[]>([]);
-const groupsSorted = computed(() =>
-  groups.value.slice().sort((a, b) => natcasecmp([a.name, b.name]))
-);
-const groupsFiltered = computed(() =>
-  groupsSorted.value.filter((group) => true)
-);
-const groupsFilteredSelf = computed(() =>
-  groupsFiltered.value.filter(
-    (group) => filteredGroup.value == null || group.id == filteredGroup.value
-  )
-);
-const groupsById = computed(() => new Map(groups.value.map((x) => [x.id!, x])));
-async function loadGroups() {
-  loading.value++;
-  try {
-    groups.value = await GroupsClient.listGroups();
-  } catch (e) {
-    console.error(e);
-    alert("Error occurred loading groups");
-  }
-  loading.value--;
-}
-const showGroups = ref(false);
-const filteredGroup = ref<string | null>(null);
-watch(groupsFiltered, () => {
-  filteredGroup.value = !groupsFiltered.value.some(
-    (x) => x.id == filteredGroup.value
-  )
-    ? null
-    : filteredGroup.value;
-});
-
-//#endregion
-
-//#region Group Participation
-
-const groupParticipations = ref<GroupParticipation[]>([]);
-const groupParticipationsSorted = computed(() =>
-  groupParticipations.value
-    .slice()
-    .sort((a, b) =>
-      natcasecmp(
-        [
-          seasonsById.value.get(a.season_id)?.name,
-          seasonsById.value.get(b.season_id)?.name,
-        ],
-        [
-          groupsById.value.get(a.group_id)?.name,
-          groupsById.value.get(b.group_id)?.name,
-        ]
-      )
-    )
-);
-const groupParticipationsFiltered = computed(() =>
-  groupParticipationsSorted.value.filter(
-    (groupParticipation) =>
-      (filteredSeason.value == null ||
-        groupParticipation.season_id == filteredSeason.value) &&
-      (filteredGroup.value == null ||
-        groupParticipation.group_id == filteredGroup.value)
-  )
-);
-const groupParticipationsFilteredSelf = computed(() =>
-  groupParticipationsFiltered.value.filter(
-    (groupParticipation) =>
-      filteredGroupParticipation.value == null ||
-      groupParticipation.id == filteredGroupParticipation.value
-  )
-);
-const groupParticipationsById = computed(
-  () => new Map(groupParticipations.value.map((x) => [x.id!, x]))
-);
-async function loadGroupParticipations() {
-  loading.value++;
-  try {
-    groupParticipations.value =
-      await GroupParticipationsClient.listGroupParticipations();
-  } catch (e) {
-    console.error(e);
-    alert("Error occurred loading group participations");
-  }
-  loading.value--;
-}
-const showGroupParticipations = ref(false);
-const filteredGroupParticipation = ref<string | null>(null);
-watch(groupParticipationsFiltered, () => {
-  filteredGroupParticipation.value = !groupParticipationsFiltered.value.some(
-    (x) => x.id == filteredGroupParticipation.value
-  )
-    ? null
-    : filteredGroupParticipation.value;
-});
-
-//#endregion
-
 //#region Competitions
 
 const competitions = ref<Competition[]>([]);
@@ -318,53 +220,6 @@ watch(seasonCompetitionsFiltered, () => {
   )
     ? null
     : filteredSeasonCompetition.value;
-});
-
-//#endregion
-
-//#region Teams
-
-const teams = ref<Team[]>([]);
-const teamsSorted = computed(() =>
-  teams.value.slice().sort((a, b) => natcasecmp([a.name, b.name]))
-);
-const teamsFiltered = computed(() =>
-  teamsSorted.value.filter(
-    (team) =>
-      (filteredSeason.value == null ||
-        groupParticipationsById.value.get(team.group_participation_id)
-          ?.season_id == filteredSeason.value) &&
-      (filteredGroup.value == null ||
-        groupParticipationsById.value.get(team.group_participation_id)
-          ?.group_id == filteredGroup.value) &&
-      (filteredGroupParticipation.value == null ||
-        team.group_participation_id == filteredGroupParticipation.value)
-  )
-);
-const teamsFilteredSelf = computed(() =>
-  teamsFiltered.value.filter(
-    (team) => filteredTeam.value == null || team.id == filteredTeam.value
-  )
-);
-const teamsById = computed(() => new Map(teams.value.map((x) => [x.id!, x])));
-async function loadTeams() {
-  loading.value++;
-  try {
-    teams.value = await TeamsClient.listTeams();
-  } catch (e) {
-    console.error(e);
-    alert("Error occurred loading teams");
-  }
-  loading.value--;
-}
-const showTeams = ref(false);
-const filteredTeam = ref<string | null>(null);
-watch(teamsFiltered, () => {
-  filteredTeam.value = !teamsFiltered.value.some(
-    (x) => x.id == filteredTeam.value
-  )
-    ? null
-    : filteredTeam.value;
 });
 
 //#endregion
@@ -496,6 +351,151 @@ watch(competitionEventsFiltered, () => {
 
 //#endregion
 
+//#region Groups
+
+const groups = ref<Group[]>([]);
+const groupsSorted = computed(() =>
+  groups.value.slice().sort((a, b) => natcasecmp([a.name, b.name]))
+);
+const groupsFiltered = computed(() =>
+  groupsSorted.value.filter((group) => true)
+);
+const groupsFilteredSelf = computed(() =>
+  groupsFiltered.value.filter(
+    (group) => filteredGroup.value == null || group.id == filteredGroup.value
+  )
+);
+const groupsById = computed(() => new Map(groups.value.map((x) => [x.id!, x])));
+async function loadGroups() {
+  loading.value++;
+  try {
+    groups.value = await GroupsClient.listGroups();
+  } catch (e) {
+    console.error(e);
+    alert("Error occurred loading groups");
+  }
+  loading.value--;
+}
+const showGroups = ref(false);
+const filteredGroup = ref<string | null>(null);
+watch(groupsFiltered, () => {
+  filteredGroup.value = !groupsFiltered.value.some(
+    (x) => x.id == filteredGroup.value
+  )
+    ? null
+    : filteredGroup.value;
+});
+
+//#endregion
+
+//#region Group Participation
+
+const groupParticipations = ref<GroupParticipation[]>([]);
+const groupParticipationsSorted = computed(() =>
+  groupParticipations.value
+    .slice()
+    .sort((a, b) =>
+      natcasecmp(
+        [
+          seasonsById.value.get(a.season_id)?.name,
+          seasonsById.value.get(b.season_id)?.name,
+        ],
+        [
+          groupsById.value.get(a.group_id)?.name,
+          groupsById.value.get(b.group_id)?.name,
+        ]
+      )
+    )
+);
+const groupParticipationsFiltered = computed(() =>
+  groupParticipationsSorted.value.filter(
+    (groupParticipation) =>
+      (filteredSeason.value == null ||
+        groupParticipation.season_id == filteredSeason.value) &&
+      (filteredGroup.value == null ||
+        groupParticipation.group_id == filteredGroup.value)
+  )
+);
+const groupParticipationsFilteredSelf = computed(() =>
+  groupParticipationsFiltered.value.filter(
+    (groupParticipation) =>
+      filteredGroupParticipation.value == null ||
+      groupParticipation.id == filteredGroupParticipation.value
+  )
+);
+const groupParticipationsById = computed(
+  () => new Map(groupParticipations.value.map((x) => [x.id!, x]))
+);
+async function loadGroupParticipations() {
+  loading.value++;
+  try {
+    groupParticipations.value =
+      await GroupParticipationsClient.listGroupParticipations();
+  } catch (e) {
+    console.error(e);
+    alert("Error occurred loading group participations");
+  }
+  loading.value--;
+}
+const showGroupParticipations = ref(false);
+const filteredGroupParticipation = ref<string | null>(null);
+watch(groupParticipationsFiltered, () => {
+  filteredGroupParticipation.value = !groupParticipationsFiltered.value.some(
+    (x) => x.id == filteredGroupParticipation.value
+  )
+    ? null
+    : filteredGroupParticipation.value;
+});
+
+//#endregion
+
+//#region Teams
+
+const teams = ref<Team[]>([]);
+const teamsSorted = computed(() =>
+  teams.value.slice().sort((a, b) => natcasecmp([a.name, b.name]))
+);
+const teamsFiltered = computed(() =>
+  teamsSorted.value.filter(
+    (team) =>
+      (filteredSeason.value == null ||
+        groupParticipationsById.value.get(team.group_participation_id)
+          ?.season_id == filteredSeason.value) &&
+      (filteredGroup.value == null ||
+        groupParticipationsById.value.get(team.group_participation_id)
+          ?.group_id == filteredGroup.value) &&
+      (filteredGroupParticipation.value == null ||
+        team.group_participation_id == filteredGroupParticipation.value)
+  )
+);
+const teamsFilteredSelf = computed(() =>
+  teamsFiltered.value.filter(
+    (team) => filteredTeam.value == null || team.id == filteredTeam.value
+  )
+);
+const teamsById = computed(() => new Map(teams.value.map((x) => [x.id!, x])));
+async function loadTeams() {
+  loading.value++;
+  try {
+    teams.value = await TeamsClient.listTeams();
+  } catch (e) {
+    console.error(e);
+    alert("Error occurred loading teams");
+  }
+  loading.value--;
+}
+const showTeams = ref(false);
+const filteredTeam = ref<string | null>(null);
+watch(teamsFiltered, () => {
+  filteredTeam.value = !teamsFiltered.value.some(
+    (x) => x.id == filteredTeam.value
+  )
+    ? null
+    : filteredTeam.value;
+});
+
+//#endregion
+
 async function load() {
   await Promise.all([
     loadScoreCalculators(),
@@ -577,31 +577,6 @@ const showCreateForms = ref(true);
       </option>
     </select>
 
-    <label> Group: </label>
-    <select v-model="filteredGroup">
-      <option :value="null"></option>
-      <option
-        v-for="group in groupsFiltered"
-        :key="group.id ?? ''"
-        :value="group.id"
-      >
-        {{ group.name }}
-      </option>
-    </select>
-
-    <label> Group Participation: </label>
-    <select v-model="filteredGroupParticipation">
-      <option :value="null"></option>
-      <option
-        v-for="groupParticipation in groupParticipationsFiltered"
-        :key="groupParticipation.id ?? ''"
-        :value="groupParticipation.id"
-      >
-        {{ seasonsById.get(groupParticipation.season_id)?.name }} -
-        {{ groupsById.get(groupParticipation.group_id)?.name }}
-      </option>
-    </select>
-
     <label> Competition: </label>
     <select v-model="filteredCompetition">
       <option :value="null"></option>
@@ -624,32 +599,6 @@ const showCreateForms = ref(true);
       >
         {{ seasonsById.get(seasonCompetition.season_id)?.name }} -
         {{ competitionsById.get(seasonCompetition.competition_id)?.name }}
-      </option>
-    </select>
-
-    <label> Team: </label>
-    <select v-model="filteredTeam">
-      <option :value="null"></option>
-      <option
-        v-for="team in teamsFiltered"
-        :key="team.id ?? ''"
-        :value="team.id"
-      >
-        {{
-          seasonsById.get(
-            groupParticipationsById.get(team.group_participation_id)
-              ?.season_id ?? ""
-          )?.name
-        }}
-        -
-        {{
-          groupsById.get(
-            groupParticipationsById.get(team.group_participation_id)
-              ?.group_id ?? ""
-          )?.name
-        }}
-        -
-        {{ team.name }}
       </option>
     </select>
 
@@ -691,7 +640,58 @@ const showCreateForms = ref(true);
       </option>
     </select>
 
-    <h2>Score Calculators</h2>
+    <label> Group: </label>
+    <select v-model="filteredGroup">
+      <option :value="null"></option>
+      <option
+        v-for="group in groupsFiltered"
+        :key="group.id ?? ''"
+        :value="group.id"
+      >
+        {{ group.name }}
+      </option>
+    </select>
+
+    <label> Group Participation: </label>
+    <select v-model="filteredGroupParticipation">
+      <option :value="null"></option>
+      <option
+        v-for="groupParticipation in groupParticipationsFiltered"
+        :key="groupParticipation.id ?? ''"
+        :value="groupParticipation.id"
+      >
+        {{ seasonsById.get(groupParticipation.season_id)?.name }} -
+        {{ groupsById.get(groupParticipation.group_id)?.name }}
+      </option>
+    </select>
+
+    <label> Team: </label>
+    <select v-model="filteredTeam">
+      <option :value="null"></option>
+      <option
+        v-for="team in teamsFiltered"
+        :key="team.id ?? ''"
+        :value="team.id"
+      >
+        {{
+          seasonsById.get(
+            groupParticipationsById.get(team.group_participation_id)
+              ?.season_id ?? ""
+          )?.name
+        }}
+        -
+        {{
+          groupsById.get(
+            groupParticipationsById.get(team.group_participation_id)
+              ?.group_id ?? ""
+          )?.name
+        }}
+        -
+        {{ team.name }}
+      </option>
+    </select>
+
+    <h1>Score Calculators</h1>
     <button @click="showScoreCalculators = !showScoreCalculators">
       Show/Hide
     </button>
@@ -705,6 +705,7 @@ const showCreateForms = ref(true);
         v-for="scoreCalculator in scoreCalculatorsFilteredSelf"
         :key="scoreCalculator.id ?? ''"
       >
+        <h2>{{ scoreCalculator.name }}</h2>
         <ScoreCalculatorEdit
           :score-calculator="scoreCalculator"
           @update="loadScoreCalculators"
@@ -713,7 +714,7 @@ const showCreateForms = ref(true);
       </template>
     </template>
 
-    <h2>Seasons</h2>
+    <h1>Seasons</h1>
     <button @click="showSeasons = !showSeasons">Show/Hide</button>
     <br /><br />
     <template v-if="showSeasons">
@@ -725,6 +726,7 @@ const showCreateForms = ref(true);
         <hr />
       </template>
       <template v-for="season in seasonsFilteredSelf" :key="season.id ?? ''">
+        <h2>{{ season.name }}</h2>
         <SeasonEdit
           :season="season"
           :score-calculators="scoreCalculatorsFilteredSelf"
@@ -734,49 +736,7 @@ const showCreateForms = ref(true);
       </template>
     </template>
 
-    <h2>Groups</h2>
-    <button @click="showGroups = !showGroups">Show/Hide</button>
-    <br /><br />
-    <template v-if="showGroups">
-      <template v-if="showCreateForms">
-        <GroupEdit @update="loadGroups" />
-        <hr />
-      </template>
-      <template v-for="group in groupsFilteredSelf" :key="group.id ?? ''">
-        <GroupEdit :group="group" @update="loadGroups" />
-        <hr />
-      </template>
-    </template>
-
-    <h2>Group Participations</h2>
-    <button @click="showGroupParticipations = !showGroupParticipations">
-      Show/Hide
-    </button>
-    <br /><br />
-    <template v-if="showGroupParticipations">
-      <template v-if="showCreateForms">
-        <GroupParticipationEdit
-          :seasons="seasonsFilteredSelf"
-          :groups="groupsFilteredSelf"
-          @update="loadGroupParticipations"
-        />
-        <hr />
-      </template>
-      <template
-        v-for="groupParticipation in groupParticipationsFilteredSelf"
-        :key="groupParticipation.id ?? ''"
-      >
-        <GroupParticipationEdit
-          :group-participation="groupParticipation"
-          :seasons="seasonsFilteredSelf"
-          :groups="groupsFilteredSelf"
-          @update="loadGroupParticipations"
-        />
-        <hr />
-      </template>
-    </template>
-
-    <h2>Competitions</h2>
+    <h1>Competitions</h1>
     <button @click="showCompetitions = !showCompetitions">Show/Hide</button>
     <br /><br />
     <template v-if="showCompetitions">
@@ -788,6 +748,9 @@ const showCreateForms = ref(true);
         v-for="competition in competitionsFilteredSelf"
         :key="competition.id ?? ''"
       >
+        <h2>
+          {{ competition.name }}
+        </h2>
         <CompetitionEdit
           :competition="competition"
           @update="loadCompetitions"
@@ -796,7 +759,7 @@ const showCreateForms = ref(true);
       </template>
     </template>
 
-    <h2>Season Competitions</h2>
+    <h1>Season Competitions</h1>
     <button @click="showSeasonCompetitions = !showSeasonCompetitions">
       Show/Hide
     </button>
@@ -815,6 +778,10 @@ const showCreateForms = ref(true);
         v-for="seasonCompetition in seasonCompetitionsFilteredSelf"
         :key="seasonCompetition.id ?? ''"
       >
+        <h2>
+          {{ seasonsById.get(seasonCompetition.season_id)?.name }} -
+          {{ competitionsById.get(seasonCompetition.competition_id)?.name }}
+        </h2>
         <SeasonCompetitionEdit
           :season-competition="seasonCompetition"
           :seasons="seasonsFilteredSelf"
@@ -826,34 +793,7 @@ const showCreateForms = ref(true);
       </template>
     </template>
 
-    <h2>Teams</h2>
-    <button @click="showTeams = !showTeams">Show/Hide</button>
-    <br /><br />
-    <template v-if="showTeams">
-      <template v-if="showCreateForms">
-        <TeamEdit
-          :group-participations="groupParticipationsFilteredSelf"
-          :group-participation-map="groupParticipationsById"
-          :season-map="seasonsById"
-          :group-map="groupsById"
-          @update="loadTeams"
-        />
-        <hr />
-      </template>
-      <template v-for="team in teamsFilteredSelf" :key="team.id ?? ''">
-        <TeamEdit
-          :team="team"
-          :group-participations="groupParticipationsFilteredSelf"
-          :group-participation-map="groupParticipationsById"
-          :season-map="seasonsById"
-          :group-map="groupsById"
-          @update="loadTeams"
-        />
-        <hr />
-      </template>
-    </template>
-
-    <h2>Events</h2>
+    <h1>Events</h1>
     <button @click="showEvents = !showEvents">Show/Hide</button>
     <br /><br />
     <template v-if="showEvents">
@@ -865,6 +805,7 @@ const showCreateForms = ref(true);
         <hr />
       </template>
       <template v-for="event in eventsFilteredSelf" :key="event.id ?? ''">
+        <h2>{{ event.name }}</h2>
         <EventEdit
           :event="event"
           :competitions="competitionsFilteredSelf"
@@ -874,7 +815,7 @@ const showCreateForms = ref(true);
       </template>
     </template>
 
-    <h2>Competition Events</h2>
+    <h1>Competition Events</h1>
     <button @click="showCompetitionEvents = !showCompetitionEvents">
       Show/Hide
     </button>
@@ -896,6 +837,23 @@ const showCreateForms = ref(true);
         v-for="competitionEvent in competitionEventsFilteredSelf"
         :key="competitionEvent.id ?? ''"
       >
+        <h2>
+          {{
+            seasonsById.get(
+              seasonCompetitionsById.get(competitionEvent.season_competition_id)
+                ?.season_id ?? ""
+            )?.name
+          }}
+          -
+          {{
+            competitionsById.get(
+              seasonCompetitionsById.get(competitionEvent.season_competition_id)
+                ?.competition_id ?? ""
+            )?.name
+          }}
+          -
+          {{ eventsById.get(competitionEvent.event_id)?.name }}
+        </h2>
         <CompetitionEventEdit
           :competition-event="competitionEvent"
           :season-competitions="seasonCompetitionsFilteredSelf"
@@ -905,6 +863,97 @@ const showCreateForms = ref(true);
           :season-map="seasonsById"
           :competition-map="competitionsById"
           @update="loadCompetitionEvents"
+        />
+        <hr />
+      </template>
+    </template>
+
+    <h1>Groups</h1>
+    <button @click="showGroups = !showGroups">Show/Hide</button>
+    <br /><br />
+    <template v-if="showGroups">
+      <template v-if="showCreateForms">
+        <GroupEdit @update="loadGroups" />
+        <hr />
+      </template>
+      <template v-for="group in groupsFilteredSelf" :key="group.id ?? ''">
+        <h2>{{ group.name }}</h2>
+        <GroupEdit :group="group" @update="loadGroups" />
+        <hr />
+      </template>
+    </template>
+
+    <h1>Group Participations</h1>
+    <button @click="showGroupParticipations = !showGroupParticipations">
+      Show/Hide
+    </button>
+    <br /><br />
+    <template v-if="showGroupParticipations">
+      <template v-if="showCreateForms">
+        <GroupParticipationEdit
+          :seasons="seasonsFilteredSelf"
+          :groups="groupsFilteredSelf"
+          @update="loadGroupParticipations"
+        />
+        <hr />
+      </template>
+      <template
+        v-for="groupParticipation in groupParticipationsFilteredSelf"
+        :key="groupParticipation.id ?? ''"
+      >
+        <h2>
+          {{ seasonsById.get(groupParticipation.season_id)?.name }} -
+          {{ groupsById.get(groupParticipation.group_id)?.name }}
+        </h2>
+        <GroupParticipationEdit
+          :group-participation="groupParticipation"
+          :seasons="seasonsFilteredSelf"
+          :groups="groupsFilteredSelf"
+          @update="loadGroupParticipations"
+        />
+        <hr />
+      </template>
+    </template>
+
+    <h1>Teams</h1>
+    <button @click="showTeams = !showTeams">Show/Hide</button>
+    <br /><br />
+    <template v-if="showTeams">
+      <template v-if="showCreateForms">
+        <TeamEdit
+          :group-participations="groupParticipationsFilteredSelf"
+          :group-participation-map="groupParticipationsById"
+          :season-map="seasonsById"
+          :group-map="groupsById"
+          @update="loadTeams"
+        />
+        <hr />
+      </template>
+      <template v-for="team in teamsFilteredSelf" :key="team.id ?? ''">
+        <h2>
+          {{
+            seasonsById.get(
+              groupParticipationsById.get(team.group_participation_id)
+                ?.season_id ?? ""
+            )?.name
+          }}
+          -
+          {{
+            groupsById.get(
+              groupParticipationsById.get(team.group_participation_id)
+                ?.group_id ?? ""
+            )?.name
+          }}
+          -
+          {{ team.name }}
+        </h2>
+        <TeamEdit
+          :team="team"
+          :group-participations="groupParticipationsFilteredSelf"
+          :group-participation-map="groupParticipationsById"
+          :season-map="seasonsById"
+          :group-map="groupsById"
+          @update="loadTeams"
         />
         <hr />
       </template>
