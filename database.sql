@@ -35,22 +35,6 @@ CREATE TABLE IF NOT EXISTS "seasons" (
     "enabled" INTEGER NOT NULL DEFAULT 1
 );
 
-CREATE TABLE IF NOT EXISTS "groups" (
-    "id" BLOB PRIMARY KEY NOT NULL DEFAULT (randomblob(16)),
-    "name" TEXT NOT NULL UNIQUE,
-    "description" TEXT NOT NULL DEFAULT "",
-    "enabled" INTEGER NOT NULL DEFAULT 1
-);
-
-CREATE TABLE IF NOT EXISTS "group_participation" (
-    "id" BLOB PRIMARY KEY NOT NULL DEFAULT (randomblob(16)),
-    "group_id" BLOB NOT NULL REFERENCES "groups" ("id"),
-    "season_id" BLOB NOT NULL REFERENCES "seasons" ("id"),
-    "description" TEXT NOT NULL DEFAULT "",
-    "enabled" INTEGER NOT NULL DEFAULT 1,
-    UNIQUE("season_id", "group_id")
-);
-
 CREATE TABLE IF NOT EXISTS "competitions" (
     "id" BLOB PRIMARY KEY NOT NULL DEFAULT (randomblob(16)),
     "name" TEXT NOT NULL UNIQUE,
@@ -66,15 +50,6 @@ CREATE TABLE IF NOT EXISTS "season_competitions" (
     "score_calculator" BLOB REFERENCES "score_calculators" ("id"),
     "enabled" INTEGER NOT NULL DEFAULT 1,
     UNIQUE("season_id", "competition_id")
-);
-
-CREATE TABLE IF NOT EXISTS "teams" (
-    "id" BLOB PRIMARY KEY NOT NULL DEFAULT (randomblob(16)),
-    "group_participation_id" BLOB NOT NULL REFERENCES "group_participation" ("id"),
-    "name" TEXT NOT NULL,
-    "description" TEXT NOT NULL DEFAULT "",
-    "enabled" INTEGER NOT NULL DEFAULT 1,
-    UNIQUE("group_participation_id", "name")
 );
 
 CREATE TABLE IF NOT EXISTS "events" (
@@ -96,6 +71,31 @@ CREATE TABLE IF NOT EXISTS "competition_events" (
     "score_type" TEXT NOT NULL DEFAULT 'team',
     "score_config" TEXT NOT NULL,
     UNIQUE("season_competition_id", "event_id")
+);
+
+CREATE TABLE IF NOT EXISTS "groups" (
+    "id" BLOB PRIMARY KEY NOT NULL DEFAULT (randomblob(16)),
+    "name" TEXT NOT NULL UNIQUE,
+    "description" TEXT NOT NULL DEFAULT "",
+    "enabled" INTEGER NOT NULL DEFAULT 1
+);
+
+CREATE TABLE IF NOT EXISTS "group_participation" (
+    "id" BLOB PRIMARY KEY NOT NULL DEFAULT (randomblob(16)),
+    "group_id" BLOB NOT NULL REFERENCES "groups" ("id"),
+    "season_id" BLOB NOT NULL REFERENCES "seasons" ("id"),
+    "description" TEXT NOT NULL DEFAULT "",
+    "enabled" INTEGER NOT NULL DEFAULT 1,
+    UNIQUE("season_id", "group_id")
+);
+
+CREATE TABLE IF NOT EXISTS "teams" (
+    "id" BLOB PRIMARY KEY NOT NULL DEFAULT (randomblob(16)),
+    "group_participation_id" BLOB NOT NULL REFERENCES "group_participation" ("id"),
+    "name" TEXT NOT NULL,
+    "description" TEXT NOT NULL DEFAULT "",
+    "enabled" INTEGER NOT NULL DEFAULT 1,
+    UNIQUE("group_participation_id", "name")
 );
 
 CREATE TABLE IF NOT EXISTS "group_scores" (
