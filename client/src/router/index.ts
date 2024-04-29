@@ -56,6 +56,11 @@ const router = createRouter({
       path: "/setup",
       component: () => import("@/views/SetupView.vue"),
     },
+    {
+      name: "score_entry",
+      path: "/score_entry",
+      component: () => import("@/views/ScoreEntryView.vue"),
+    },
   ],
 });
 

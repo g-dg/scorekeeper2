@@ -19,6 +19,9 @@ const clientVersion = __APP_VERSION__;
           <li>
             <RouterLink :to="{ name: 'home' }">Home</RouterLink>
           </li>
+          <li v-if="user?.permission_enter_scores">
+            <RouterLink :to="{ name: 'score_entry' }">Score Entry</RouterLink>
+          </li>
           <li v-if="user?.permission_setup_admin">
             <RouterLink :to="{ name: 'setup' }">Setup</RouterLink>
           </li>
