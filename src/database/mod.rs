@@ -95,12 +95,12 @@ impl Database {
                         permissions: UserPermission::MODIFY_SELF | UserPermission::USER_ADMIN,
                         permission_modify_self: true,
                         permission_user_admin: true,
-                        permission_setup_admin: false,
-                        permission_view_results: false,
-                        permission_view_scores: false,
-                        permission_enter_scores: false,
-                        permission_view_registration: false,
-                        permission_enter_registration: false,
+                        permission_setup_admin: true,
+                        permission_view_results: true,
+                        permission_view_scores: true,
+                        permission_enter_scores: true,
+                        permission_view_registration: true,
+                        permission_enter_registration: true,
                     })
                     .expect("Error occurred creating default admin user");
 
