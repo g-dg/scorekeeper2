@@ -72,8 +72,8 @@ pub async fn main() {
 
     let app_state = Arc::new(AppState {
         audit_service: AuditService::new(database.clone()),
-        auth_service: AuthService::new(database.clone()),
-        users_service: UsersService::new(database.clone()),
+        auth_service: AuthService::new(database.clone(), &config),
+        users_service: UsersService::new(database.clone(), &config),
         score_calculators_service: ScoreCalculatorsService::new(database.clone()),
         seasons_service: SeasonsService::new(database.clone()),
         competitions_service: CompetitionsService::new(database.clone()),

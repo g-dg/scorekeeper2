@@ -10,26 +10,31 @@ use rusqlite::{named_params, OptionalExtension};
 use serde_json::json;
 use uuid::Uuid;
 
-use crate::database::{
-    users::{DbSession, DbUser},
-    Database,
+use crate::{
+    config::AppConfig,
+    database::{
+        users::{DbSession, DbUser},
+        Database,
+    },
 };
 
 use super::{audit::AuditService, users::UsersService};
 
-pub const SESSION_MAX_AGE: Duration = Duration::from_secs(60 * 60 * 24);
+const SESSION_RENEW_MIN_AGE: i64 = 60;
 
 pub struct AuthService {
+    config: AppConfig,
     db: Database,
     audit_service: AuditService,
     user_service: UsersService,
 }
 
 impl AuthService {
-    pub fn new(database: Database) -> Self {
+    pub fn new(database: Database, config: &AppConfig) -> Self {
         Self {
+            config: config.clone(),
             audit_service: AuditService::new(database.clone()),
-            user_service: UsersService::new(database.clone()),
+            user_service: UsersService::new(database.clone(), config),
             db: database,
         }
     }
@@ -132,7 +137,8 @@ impl AuthService {
             return None;
         }
 
-        let session_max_age = TimeDelta::from_std(SESSION_MAX_AGE).unwrap();
+        let session_max_age =
+            TimeDelta::from_std(Duration::from_secs(self.config.session_max_age)).unwrap();
 
         // check if session timestamp expired
         if now - session.timestamp > session_max_age {
@@ -145,7 +151,12 @@ impl AuthService {
         }
 
         // update session timestamp if it's older than 60 seconds to prevent unnecessary database writes
-        if now - session.timestamp > std::cmp::min(TimeDelta::seconds(60), session_max_age / 2) {
+        if now - session.timestamp
+            > std::cmp::min(
+                TimeDelta::seconds(SESSION_RENEW_MIN_AGE),
+                session_max_age / 2,
+            )
+        {
             db.prepare_cached(
                 "UPDATE \"sessions\" SET \"timestamp\" = :timestamp WHERE \"token\" = :token;",
             )

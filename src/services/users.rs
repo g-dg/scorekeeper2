@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 use crate::{
+    config::AppConfig,
     database::{
         users::{DbUser, UserPermission},
         Database,
@@ -52,12 +53,16 @@ impl User {
 }
 
 pub struct UsersService {
+    config: AppConfig,
     db: Database,
 }
 
 impl UsersService {
-    pub fn new(database: Database) -> Self {
-        Self { db: database }
+    pub fn new(database: Database, config: &AppConfig) -> Self {
+        Self {
+            config: config.clone(),
+            db: database,
+        }
     }
 
     pub fn get_user_by_id(&self, id: Uuid) -> Option<DbUser> {
@@ -217,7 +222,7 @@ impl UsersService {
             })
             .is_ok();
 
-        let auth_service = AuthService::new(self.db.clone());
+        let auth_service = AuthService::new(self.db.clone(), &self.config);
         auth_service.invalidate_sessions(user_id, session_to_keep);
 
         if success {

@@ -79,7 +79,7 @@ impl Database {
 
             audit_service.log(None, "init");
 
-            let user_service = UsersService::new(db.clone());
+            let user_service = UsersService::new(db.clone(), config);
 
             if user_service
                 .get_user_by_name(&config.default_admin_username)

@@ -23,6 +23,9 @@ pub struct AppConfig {
     #[serde(default = "default_default_admin_password")]
     pub default_admin_password: String,
 
+    #[serde(default = "default_session_max_age")]
+    pub session_max_age: u64,
+
     #[serde(default = "default_static_file_root")]
     pub static_file_root: String,
 
@@ -76,6 +79,9 @@ fn default_default_admin_username() -> String {
 }
 fn default_default_admin_password() -> String {
     String::from("admin")
+}
+fn default_session_max_age() -> u64 {
+    86400
 }
 fn default_static_file_root() -> String {
     String::from("./client/dist/")
