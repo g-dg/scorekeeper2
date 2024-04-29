@@ -15,4 +15,13 @@ export default defineConfig({
   define: {
     __APP_VERSION__: JSON.stringify(process.env.npm_package_version),
   },
+  build: {
+    rollupOptions: {
+      output: {
+        compact: true,
+        chunkFileNames: "assets/[hash].js",
+        // experimentalMinChunkSize: 65536,
+      }
+    }
+  }
 });
