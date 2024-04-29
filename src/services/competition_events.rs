@@ -73,7 +73,7 @@ impl CompetitionEventsService {
         let db = self.db.get();
         let success = db
             .prepare_cached(&format!(
-                "INSERT INTO \"competition_events\" ({}) VALUES (:id, :season_competition_id, :event_id, :description, :score_calculator, :enabled, :score_type, :score_config);",
+                "INSERT INTO \"competition_events\" ({}) VALUES (:id, :season_competition_id, :event_id, :description, :score_calculator, :calculator_config, :enabled, :score_type);",
                 CompetitionEvent::COLUMNS_SQL
             ))
             .unwrap()
@@ -83,9 +83,9 @@ impl CompetitionEventsService {
                 ":event_id": competition_event.event_id,
                 ":description": competition_event.description,
                 ":score_calculator": competition_event.score_calculator,
+                ":calculator_config": competition_event.calculator_config,
                 ":enabled": competition_event.enabled,
                 ":score_type": competition_event.score_type,
-                ":score_config": competition_event.score_config,
             })
             .is_ok();
 
@@ -102,7 +102,7 @@ impl CompetitionEventsService {
         };
 
         let db = self.db.get();
-        let success = db.prepare_cached("UPDATE \"competition_events\" SET \"season_competition_id\" = :season_competition_id, \"event_id\" = :event_id, \"description\" = :description, \"score_calculator\" = :score_calculator, \"enabled\" = :enabled, \"score_type\" = :score_type, \"score_config\" = :score_config WHERE \"id\" = :id;")
+        let success = db.prepare_cached("UPDATE \"competition_events\" SET \"season_competition_id\" = :season_competition_id, \"event_id\" = :event_id, \"description\" = :description, \"score_calculator\" = :score_calculator, \"calculator_config\" = :calculator_config, \"enabled\" = :enabled, \"score_type\" = :score_type WHERE \"id\" = :id;")
             .unwrap()
             .execute(named_params! {
                 ":id": competition_event.id,
@@ -110,9 +110,9 @@ impl CompetitionEventsService {
                 ":event_id": competition_event.event_id,
                 ":description": competition_event.description,
                 ":score_calculator": competition_event.score_calculator,
+                ":calculator_config": competition_event.calculator_config,
                 ":enabled": competition_event.enabled,
                 ":score_type": competition_event.score_type,
-                ":score_config": competition_event.score_config,
             })
             .is_ok();
 

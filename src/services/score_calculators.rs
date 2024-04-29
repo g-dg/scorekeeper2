@@ -54,7 +54,7 @@ impl ScoreCalculatorsService {
         let db = self.db.get();
         let success = db
             .prepare_cached(&format!(
-                "INSERT INTO \"score_calculators\" ({}) VALUES (:id, :name, :description, :script, :config_options);",
+                "INSERT INTO \"score_calculators\" ({}) VALUES (:id, :name, :description, :script, :default_config, :supports_seasons, :supports_competitions, :supports_events, :score_fields);",
                 ScoreCalculator::COLUMNS_SQL
             ))
             .unwrap()
@@ -63,7 +63,11 @@ impl ScoreCalculatorsService {
                 ":name": score_calculator.name,
                 ":description": score_calculator.description,
                 ":script": score_calculator.script,
-                ":config_options": score_calculator.config_options,
+                ":default_config": score_calculator.default_config,
+                ":supports_seasons": score_calculator.supports_seasons,
+                ":supports_competitions": score_calculator.supports_competitions,
+                ":supports_events": score_calculator.supports_events,
+                ":score_fields": score_calculator.score_fields,
             })
             .is_ok();
 
@@ -80,14 +84,18 @@ impl ScoreCalculatorsService {
         };
 
         let db = self.db.get();
-        let success = db.prepare_cached("UPDATE \"score_calculators\" SET \"name\" = :name, \"description\" = :description, \"script\" = :script, \"config_options\" = :config_options WHERE \"id\" = :id;")
+        let success = db.prepare_cached("UPDATE \"score_calculators\" SET \"name\" = :name, \"description\" = :description, \"script\" = :script, \"default_config\" = :default_config, \"supports_seasons\" = :supports_seasons, \"supports_competitions\" = :supports_competitions, \"supports_events\" = :supports_events, \"score_fields\" = :score_fields WHERE \"id\" = :id;")
             .unwrap()
             .execute(named_params! {
                 ":id": score_calculator.id,
                 ":name": score_calculator.name,
                 ":description": score_calculator.description,
                 ":script": score_calculator.script,
-                ":config_options": score_calculator.config_options,
+                ":default_config": score_calculator.default_config,
+                ":supports_seasons": score_calculator.supports_seasons,
+                ":supports_competitions": score_calculator.supports_competitions,
+                ":supports_events": score_calculator.supports_events,
+                ":score_fields": score_calculator.score_fields,
             })
             .is_ok();
 

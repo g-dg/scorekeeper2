@@ -4,6 +4,7 @@ const defaultSeason: Season = {
   name: "",
   description: "",
   score_calculator: null,
+  calculator_config: "{}",
   enabled: true,
 };
 </script>
@@ -98,12 +99,17 @@ async function remove() {
     <select v-model="season.score_calculator">
       <option :value="null"></option>
       <option
-        v-for="scoreCalculator in scoreCalculators"
+        v-for="scoreCalculator in scoreCalculators.filter(
+          (x) => x.supports_seasons
+        )"
         :value="scoreCalculator.id"
       >
         {{ scoreCalculator.name }}
       </option>
     </select>
+
+    <label> Calculator Config: </label>
+    <textarea v-model="season.calculator_config"></textarea>
 
     <label> Enabled: </label>
     <input v-model="season.enabled" type="checkbox" />

@@ -24,7 +24,11 @@ CREATE TABLE IF NOT EXISTS "score_calculators" (
     "name" TEXT NOT NULL UNIQUE,
     "description" TEXT NOT NULL DEFAULT "",
     "script" TEXT NOT NULL,
-    "config_options" TEXT NOT NULL
+    "default_config" TEXT NOT NULL DEFAULT '{}',
+    "supports_seasons" INTEGER NOT NULL DEFAULT 0,
+    "supports_competitions" INTEGER NOT NULL DEFAULT 0,
+    "supports_events" INTEGER NOT NULL DEFAULT 0,
+    "score_fields" TEXT
 );
 
 CREATE TABLE IF NOT EXISTS "seasons" (
@@ -32,6 +36,7 @@ CREATE TABLE IF NOT EXISTS "seasons" (
     "name" TEXT NOT NULL UNIQUE,
     "description" TEXT NOT NULL DEFAULT "",
     "score_calculator" BLOB REFERENCES "score_calculators" ("id"),
+    "calculator_config" TEXT NOT NULL DEFAULT '{}',
     "enabled" INTEGER NOT NULL DEFAULT 1
 );
 
@@ -48,6 +53,7 @@ CREATE TABLE IF NOT EXISTS "season_competitions" (
     "competition_id" BLOB NOT NULL REFERENCES "competitions" ("id"),
     "description" TEXT NOT NULL DEFAULT "",
     "score_calculator" BLOB REFERENCES "score_calculators" ("id"),
+    "calculator_config" TEXT NOT NULL DEFAULT '{}',
     "enabled" INTEGER NOT NULL DEFAULT 1,
     UNIQUE("season_id", "competition_id")
 );
@@ -67,9 +73,9 @@ CREATE TABLE IF NOT EXISTS "competition_events" (
     "event_id" BLOB NOT NULL REFERENCES "events" ("id"),
     "description" TEXT NOT NULL DEFAULT "",
     "score_calculator" BLOB REFERENCES "score_calculators" ("id"),
+    "calculator_config" TEXT NOT NULL DEFAULT '{}',
     "enabled" INTEGER NOT NULL DEFAULT 1,
     "score_type" TEXT NOT NULL DEFAULT 'team',
-    "score_config" TEXT NOT NULL,
     UNIQUE("season_competition_id", "event_id")
 );
 
@@ -102,7 +108,7 @@ CREATE TABLE IF NOT EXISTS "group_scores" (
     "id" BLOB PRIMARY KEY NOT NULL DEFAULT (randomblob(16)),
     "competition_event_id" BLOB NOT NULL REFERENCES "competition_events" ("id"),
     "group_participation_id" BLOB NOT NULL REFERENCES "group_participation" ("id"),
-    "score_data" TEXT NOT NULL,
+    "score_data" TEXT NOT NULL DEFAULT '{}',
     "timestamp" TEXT NOT NULL DEFAULT (strftime('%Y-%m-%d %H:%M:%f+00:00')),
     "valid" INTEGER NOT NULL DEFAULT 1,
     "disqualified" INTEGER NOT NULL DEFAULT 0,
@@ -114,7 +120,7 @@ CREATE TABLE IF NOT EXISTS "team_scores" (
     "id" BLOB PRIMARY KEY NOT NULL DEFAULT (randomblob(16)),
     "competition_event_id" BLOB NOT NULL REFERENCES "competition_events" ("id"),
     "team_id" BLOB NOT NULL REFERENCES "teams" ("id"),
-    "score_data" TEXT NOT NULL,
+    "score_data" TEXT NOT NULL DEFAULT '{}',
     "timestamp" TEXT NOT NULL DEFAULT (strftime('%Y-%m-%d %H:%M:%f+00:00')),
     "valid" INTEGER NOT NULL DEFAULT 1,
     "disqualified" INTEGER NOT NULL DEFAULT 0,

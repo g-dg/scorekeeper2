@@ -5,6 +5,7 @@ export interface Season {
   name: string;
   description: string;
   score_calculator: string | null;
+  calculator_config: string;
   enabled: boolean;
 }
 

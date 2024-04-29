@@ -49,7 +49,7 @@ impl SeasonsService {
         let db = self.db.get();
         let success = db
             .prepare_cached(&format!(
-                "INSERT INTO \"seasons\" ({}) VALUES (:id, :name, :description, :score_calculator, :enabled);",
+                "INSERT INTO \"seasons\" ({}) VALUES (:id, :name, :description, :score_calculator, :calculator_config, :enabled);",
                 Season::COLUMNS_SQL
             ))
             .unwrap()
@@ -58,6 +58,7 @@ impl SeasonsService {
                 ":name": season.name,
                 ":description": season.description,
                 ":score_calculator": season.score_calculator,
+                ":calculator_config": season.calculator_config,
                 ":enabled": season.enabled,
             })
             .is_ok();
@@ -75,13 +76,14 @@ impl SeasonsService {
         };
 
         let db = self.db.get();
-        let success = db.prepare_cached("UPDATE \"seasons\" SET \"name\" = :name, \"description\" = :description, \"score_calculator\" = :score_calculator, \"enabled\" = :enabled WHERE \"id\" = :id;")
+        let success = db.prepare_cached("UPDATE \"seasons\" SET \"name\" = :name, \"description\" = :description, \"score_calculator\" = :score_calculator, \"calculator_config\" = :calculator_config, \"enabled\" = :enabled WHERE \"id\" = :id;")
             .unwrap()
             .execute(named_params! {
                 ":id": season.id,
                 ":name": season.name,
                 ":description": season.description,
                 ":score_calculator": season.score_calculator,
+                ":calculator_config": season.calculator_config,
                 ":enabled": season.enabled,
             })
             .is_ok();

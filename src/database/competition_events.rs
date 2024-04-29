@@ -1,5 +1,6 @@
 use rusqlite::Row;
 use serde::{Deserialize, Serialize};
+use serde_json::Value as JsonValue;
 use uuid::Uuid;
 
 use super::scores::ScoreType;
@@ -11,15 +12,15 @@ pub struct CompetitionEvent {
     pub event_id: Uuid,
     pub description: String,
     pub score_calculator: Option<Uuid>,
+    pub calculator_config: JsonValue,
     pub enabled: bool,
     pub score_type: ScoreType,
-    pub score_config: String,
 }
 impl CompetitionEvent {
     pub const TABLE_NAME: &'static str = "competition_events";
 
     pub const COLUMNS_SQL: &'static str =
-        "\"id\", \"season_competition_id\", \"event_id\", \"description\", \"score_calculator\", \"enabled\", \"score_type\", \"score_config\"";
+        "\"id\", \"season_competition_id\", \"event_id\", \"description\", \"score_calculator\", \"calculator_config\", \"enabled\", \"score_type\"";
 
     pub fn from_row(row: &Row) -> Self {
         Self {
@@ -38,14 +39,14 @@ impl CompetitionEvent {
             score_calculator: row
                 .get("score_calculator")
                 .expect("Failed to get value from database row"),
+            calculator_config: row
+                .get("calculator_config")
+                .expect("Failed to get value from database row"),
             enabled: row
                 .get("enabled")
                 .expect("Failed to get value from database row"),
             score_type: row
                 .get("score_type")
-                .expect("Failed to get value from database row"),
-            score_config: row
-                .get("score_config")
                 .expect("Failed to get value from database row"),
         }
     }

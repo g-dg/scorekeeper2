@@ -5,7 +5,11 @@ export interface ScoreCalculator {
   name: string;
   description: string;
   script: string;
-  config_options: string;
+  default_config: string;
+  supports_seasons: boolean;
+  supports_competitions: boolean;
+  supports_events: boolean;
+  score_fields: string | null;
 }
 
 export class ScoreCalculatorsClient {

@@ -4,7 +4,11 @@ const defaultScoreCalculator: ScoreCalculator = {
   name: "",
   description: "",
   script: "",
-  config_options: "{}",
+  default_config: "{}",
+  supports_seasons: false,
+  supports_competitions: false,
+  supports_events: false,
+  score_fields: null,
 };
 </script>
 
@@ -102,8 +106,20 @@ async function remove() {
     <label> Script: </label>
     <textarea v-model="scoreCalculator.script"></textarea>
 
-    <label> Config Options: </label>
-    <textarea v-model="scoreCalculator.config_options"></textarea>
+    <label> Default Config: </label>
+    <textarea v-model="scoreCalculator.default_config"></textarea>
+
+    <label> Supports Seasons: </label>
+    <input v-model="scoreCalculator.supports_seasons" type="checkbox" />
+
+    <label> Supports Competitions: </label>
+    <input v-model="scoreCalculator.supports_competitions" type="checkbox" />
+
+    <label> Supports Events: </label>
+    <input v-model="scoreCalculator.supports_events" type="checkbox" />
+
+    <label> Score Fields: </label>
+    <textarea v-model="scoreCalculator.score_fields"></textarea>
 
     <button v-if="scoreCalculator.id == null" @click="create" type="submit">
       Create

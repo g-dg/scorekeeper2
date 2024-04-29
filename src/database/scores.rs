@@ -4,6 +4,7 @@ use rusqlite::{
     Row, ToSql,
 };
 use serde::{Deserialize, Serialize};
+use serde_json::Value as JsonValue;
 use uuid::Uuid;
 
 #[derive(Clone, Serialize, Deserialize)]
@@ -36,7 +37,7 @@ pub struct Score {
     pub competition_event_id: Uuid,
     pub score_type: ScoreType,
     pub subject_id: Uuid,
-    pub score_data: String,
+    pub score_data: JsonValue,
     pub timestamp: DateTime<Utc>,
     pub valid: bool,
     pub disqualified: bool,

@@ -5,7 +5,8 @@ export interface SeasonCompetition {
   season_id: string;
   competition_id: string;
   description: string;
-  score_calculator: String | null;
+  score_calculator: string | null;
+  calculator_config: string;
   enabled: boolean;
 }
 

@@ -9,7 +9,7 @@ export interface CompetitionEvent {
   score_calculator: string | null;
   enabled: boolean;
   score_type: ScoreType;
-  score_config: string;
+  calculator_config: string;
 }
 
 export class CompetitionEventsClient {

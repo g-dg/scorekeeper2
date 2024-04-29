@@ -73,7 +73,7 @@ impl SeasonCompetitionsService {
         let db = self.db.get();
         let success = db
             .prepare_cached(&format!(
-                "INSERT INTO \"season_competitions\" ({}) VALUES (:id, :season_id, :competition_id, :description, :score_calculator, :enabled);",
+                "INSERT INTO \"season_competitions\" ({}) VALUES (:id, :season_id, :competition_id, :description, :score_calculator, :calculator_config, :enabled);",
                 SeasonCompetition::COLUMNS_SQL
             ))
             .unwrap()
@@ -83,6 +83,7 @@ impl SeasonCompetitionsService {
                 ":competition_id": season_competition.competition_id,
                 ":description": season_competition.description,
                 ":score_calculator": season_competition.score_calculator,
+                ":calculator_config": season_competition.calculator_config,
                 ":enabled": season_competition.enabled,
             })
             .is_ok();
@@ -100,7 +101,7 @@ impl SeasonCompetitionsService {
         };
 
         let db = self.db.get();
-        let success = db.prepare_cached("UPDATE \"season_competitions\" SET \"season_id\" = :season_id, \"competition_id\" = :competition_id, \"description\" = :description, \"score_calculator\" = :score_calculator, \"enabled\" = :enabled WHERE \"id\" = :id;")
+        let success = db.prepare_cached("UPDATE \"season_competitions\" SET \"season_id\" = :season_id, \"competition_id\" = :competition_id, \"description\" = :description, \"score_calculator\" = :score_calculator, \"calculator_config\" = :calculator_config, \"enabled\" = :enabled WHERE \"id\" = :id;")
             .unwrap()
             .execute(named_params! {
                 ":id": season_competition.id,
@@ -108,6 +109,7 @@ impl SeasonCompetitionsService {
                 ":competition_id": season_competition.competition_id,
                 ":description": season_competition.description,
                 ":score_calculator": season_competition.score_calculator,
+                ":calculator_config": season_competition.calculator_config,
                 ":enabled": season_competition.enabled,
             })
             .is_ok();

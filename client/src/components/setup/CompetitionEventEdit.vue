@@ -5,9 +5,9 @@ const defaultCompetitionEvent: CompetitionEvent = {
   event_id: "",
   description: "",
   score_calculator: null,
+  calculator_config: "{}",
   enabled: true,
   score_type: "Team",
-  score_config: "{}",
 };
 </script>
 
@@ -164,13 +164,18 @@ async function remove() {
     <select v-model="competitionEvent.score_calculator">
       <option value=""></option>
       <option
-        v-for="scoreCalculator in scoreCalculators"
+        v-for="scoreCalculator in scoreCalculators.filter(
+          (x) => x.supports_events
+        )"
         :key="scoreCalculator.id ?? ''"
         :value="scoreCalculator.id"
       >
         {{ scoreCalculator.name }}
       </option>
     </select>
+
+    <label> Calculator Config: </label>
+    <textarea v-model="competitionEvent.calculator_config"></textarea>
 
     <label> Enabled: </label>
     <input v-model="competitionEvent.enabled" type="checkbox" />
@@ -180,9 +185,6 @@ async function remove() {
       <option value="Group">Group</option>
       <option value="Team">Team</option>
     </select>
-
-    <label> Score Config: </label>
-    <textarea v-model="competitionEvent.score_config"></textarea>
 
     <button v-if="competitionEvent.id == null" @click="create" type="submit">
       Create
