@@ -7,12 +7,12 @@ pub mod services;
 use std::{net::SocketAddr, path::Path, sync::Arc};
 
 use axum::{
-    http::{header, Method},
+    http::{header, HeaderValue, Method},
     middleware,
     routing::{get, post},
     Router,
 };
-use config::Config;
+use config::AppConfig;
 use helpers::api_request_logging;
 use tokio::{net::TcpListener, signal};
 use tower::ServiceBuilder;
@@ -21,6 +21,7 @@ use tower_http::{
     compression::CompressionLayer,
     cors::CorsLayer,
     services::{ServeDir, ServeFile},
+    set_header::SetResponseHeaderLayer,
 };
 
 use database::Database;
@@ -36,7 +37,7 @@ use services::{
 const CONFIG_FILE: &str = "./config.json";
 
 pub struct AppState {
-    pub config: Config,
+    pub config: AppConfig,
     pub database: Database,
     pub audit_service: AuditService,
     pub auth_service: AuthService,
@@ -65,9 +66,10 @@ pub async fn version() -> &'static str {
 
 #[tokio::main]
 pub async fn main() {
-    let config = Config::load(CONFIG_FILE).await;
+    let config = AppConfig::load(CONFIG_FILE).await;
 
-    let database = Database::new(&config.database_file);
+    let database = Database::new(&config);
+
     let app_state = Arc::new(AppState {
         audit_service: AuditService::new(database.clone()),
         auth_service: AuthService::new(database.clone()),
@@ -95,10 +97,20 @@ pub async fn main() {
         .collect();
 
     let app = Router::new()
-        .route_service("/", ServeFile::new(&static_file_index))
-        .route_service(
-            "/*path",
-            ServeDir::new(config.static_file_root).fallback(ServeFile::new(&static_file_index)),
+        .nest(
+            "/",
+            Router::new()
+                .route_service("/", ServeFile::new(&static_file_index))
+                .route_service(
+                    "/*path",
+                    ServeDir::new(&config.static_file_root)
+                        .fallback(ServeFile::new(&static_file_index)),
+                )
+                .layer(SetResponseHeaderLayer::if_not_present(
+                    header::CACHE_CONTROL,
+                    HeaderValue::from_str(&format!("max-age={}", config.http_caching_max_age))
+                        .unwrap(),
+                )),
         )
         .nest(
             "/system",
@@ -116,7 +128,13 @@ pub async fn main() {
                 ))
             } else {
                 api::route()
-            },
+            }
+            .layer(SetResponseHeaderLayer::if_not_present(
+                header::CACHE_CONTROL,
+                HeaderValue::from_static(
+                    "no-store, no-cache, max-age=0, must-revalidate, proxy-revalidate",
+                ),
+            )),
         )
         .layer(
             ServiceBuilder::new()

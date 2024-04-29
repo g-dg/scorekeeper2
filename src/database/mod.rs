@@ -14,16 +14,17 @@ use r2d2::{Pool, PooledConnection};
 use r2d2_sqlite::SqliteConnectionManager;
 use serde_json::json;
 
-use crate::services::{
-    audit::AuditService,
-    users::{User, UsersService},
+use crate::{
+    config::AppConfig,
+    services::{
+        audit::AuditService,
+        users::{User, UsersService},
+    },
 };
 
 use self::users::UserPermission;
 
 const DATABASE_DEFINITION_SQL: &str = include_str!("../../database.sql");
-const DEFAULT_ADMIN_USER_NAME: &str = "admin";
-const DEFAULT_ADMIN_USER_PASSWORD: &str = "admin";
 
 #[derive(Clone)]
 pub struct Database {
@@ -32,8 +33,8 @@ pub struct Database {
 
 impl Database {
     /// Creates a new database connection pool
-    pub fn new(database_file: &str) -> Self {
-        let manager = SqliteConnectionManager::file(database_file)
+    pub fn new(config: &AppConfig) -> Self {
+        let manager = SqliteConnectionManager::file(&config.database_file)
             .with_init(|c| c.execute_batch("PRAGMA busy_timeout = 60000; PRAGMA journal_mode = WAL; PRAGMA synchronous = NORMAL; PRAGMA foreign_keys = 1; PRAGMA auto_vacuum = INCREMENTAL; PRAGMA recursive_triggers = 1;"));
 
         let pool = r2d2::Pool::new(manager).expect("Error occurred connecting to database");
@@ -81,14 +82,14 @@ impl Database {
             let user_service = UsersService::new(db.clone());
 
             if user_service
-                .get_user_by_name(DEFAULT_ADMIN_USER_NAME)
+                .get_user_by_name(&config.default_admin_username)
                 .is_none()
             {
                 let user_id = user_service
                     .create(&User {
                         id: None,
-                        username: String::from(DEFAULT_ADMIN_USER_NAME),
-                        new_password: Some(String::from(DEFAULT_ADMIN_USER_PASSWORD)),
+                        username: String::from(&config.default_admin_username),
+                        new_password: Some(String::from(&config.default_admin_password)),
                         description: String::new(),
                         enabled: true,
                         permissions: UserPermission::MODIFY_SELF | UserPermission::USER_ADMIN,

@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use tokio::fs;
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
-pub struct Config {
+pub struct AppConfig {
     #[serde(default = "default_host")]
     pub host: String,
 
@@ -17,6 +17,12 @@ pub struct Config {
     #[serde(default = "default_database_file")]
     pub database_file: String,
 
+    #[serde(default = "default_default_admin_username")]
+    pub default_admin_username: String,
+
+    #[serde(default = "default_default_admin_password")]
+    pub default_admin_password: String,
+
     #[serde(default = "default_static_file_root")]
     pub static_file_root: String,
 
@@ -25,9 +31,12 @@ pub struct Config {
 
     #[serde(default = "default_enable_api_request_logging")]
     pub enable_api_request_logging: bool,
+
+    #[serde(default = "default_http_caching_max_age")]
+    pub http_caching_max_age: u64,
 }
 
-impl Config {
+impl AppConfig {
     pub async fn load(filename: &str) -> Self {
         let contents = match fs::read_to_string(filename).await {
             Ok(value) => value,
@@ -62,6 +71,12 @@ fn default_cors_allowed_origins() -> Vec<String> {
 fn default_database_file() -> String {
     String::from("./database.sqlite3")
 }
+fn default_default_admin_username() -> String {
+    String::from("admin")
+}
+fn default_default_admin_password() -> String {
+    String::from("admin")
+}
 fn default_static_file_root() -> String {
     String::from("./client/dist/")
 }
@@ -70,4 +85,7 @@ fn default_static_file_index() -> String {
 }
 fn default_enable_api_request_logging() -> bool {
     false
+}
+fn default_http_caching_max_age() -> u64 {
+    60 * 60 * 24
 }
