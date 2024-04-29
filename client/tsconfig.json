@@ -1,4 +1,9 @@
 {
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "strict": true
+  },
   "files": [],
   "references": [
     {
