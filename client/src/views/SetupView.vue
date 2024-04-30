@@ -455,7 +455,33 @@ watch(groupParticipationsFiltered, () => {
 
 const teams = ref<Team[]>([]);
 const teamsSorted = computed(() =>
-  teams.value.slice().sort((a, b) => natcasecmp([a.name, b.name]))
+  teams.value
+    .slice()
+    .sort((a, b) =>
+      natcasecmp(
+        [
+          seasonsById.value.get(
+            groupParticipationsById.value.get(a.group_participation_id)
+              ?.season_id ?? ""
+          )?.name,
+          seasonsById.value.get(
+            groupParticipationsById.value.get(b.group_participation_id)
+              ?.season_id ?? ""
+          )?.name,
+        ],
+        [
+          groupsById.value.get(
+            groupParticipationsById.value.get(a.group_participation_id)
+              ?.group_id ?? ""
+          )?.name,
+          groupsById.value.get(
+            groupParticipationsById.value.get(b.group_participation_id)
+              ?.group_id ?? ""
+          )?.name,
+        ],
+        [a.name, b.name]
+      )
+    )
 );
 const teamsFiltered = computed(() =>
   teamsSorted.value.filter(
