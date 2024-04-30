@@ -29,7 +29,10 @@ pub async fn list_scores(
     State(state): State<Arc<AppState>>,
     token: AuthToken,
 ) -> impl IntoResponse {
-    let Some(_current_user) = token.authorize(&state, UserPermission::SCORE_VIEW) else {
+    let Some(_current_user) = token.authorize(
+        &state,
+        UserPermission::SCORE_VIEW | UserPermission::SCORE_ENTRY,
+    ) else {
         return AuthToken::failure_response();
     };
 
@@ -43,7 +46,10 @@ pub async fn get_score(
     Path(id): Path<Uuid>,
     token: AuthToken,
 ) -> impl IntoResponse {
-    let Some(_current_user) = token.authorize(&state, UserPermission::SCORE_VIEW) else {
+    let Some(_current_user) = token.authorize(
+        &state,
+        UserPermission::SCORE_VIEW | UserPermission::SCORE_ENTRY,
+    ) else {
         return AuthToken::failure_response();
     };
 

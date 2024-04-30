@@ -5,7 +5,7 @@ use uuid::Uuid;
 
 pub struct UserPermission {}
 impl UserPermission {
-    pub const NONE: i64 = 0;
+    pub const ANY: i64 = -1;
     pub const MODIFY_SELF: i64 = 1 << 0;
     pub const USER_ADMIN: i64 = 1 << 1;
     pub const SETUP_ADMIN: i64 = 1 << 2;

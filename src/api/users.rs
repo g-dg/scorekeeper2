@@ -175,7 +175,7 @@ pub async fn change_password(
     token: AuthToken,
     Json(request): Json<String>,
 ) -> impl IntoResponse {
-    let Some(current_user) = token.authorize(&state, UserPermission::NONE) else {
+    let Some(current_user) = token.authorize(&state, UserPermission::ANY) else {
         return AuthToken::failure_response();
     };
 

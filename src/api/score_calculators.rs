@@ -29,7 +29,7 @@ pub async fn list_score_calculators(
     State(state): State<Arc<AppState>>,
     token: AuthToken,
 ) -> impl IntoResponse {
-    let Some(_current_user) = token.authorize(&state, UserPermission::NONE) else {
+    let Some(_current_user) = token.authorize(&state, UserPermission::ANY) else {
         return AuthToken::failure_response();
     };
 
@@ -43,7 +43,7 @@ pub async fn get_score_calculator(
     Path(id): Path<Uuid>,
     token: AuthToken,
 ) -> impl IntoResponse {
-    let Some(_current_user) = token.authorize(&state, UserPermission::NONE) else {
+    let Some(_current_user) = token.authorize(&state, UserPermission::ANY) else {
         return AuthToken::failure_response();
     };
 

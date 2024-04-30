@@ -26,7 +26,7 @@ pub fn route() -> Router<Arc<AppState>> {
 }
 
 pub async fn list_teams(State(state): State<Arc<AppState>>, token: AuthToken) -> impl IntoResponse {
-    let Some(_current_user) = token.authorize(&state, UserPermission::NONE) else {
+    let Some(_current_user) = token.authorize(&state, UserPermission::ANY) else {
         return AuthToken::failure_response();
     };
 
@@ -40,7 +40,7 @@ pub async fn get_team(
     Path(id): Path<Uuid>,
     token: AuthToken,
 ) -> impl IntoResponse {
-    let Some(_current_user) = token.authorize(&state, UserPermission::NONE) else {
+    let Some(_current_user) = token.authorize(&state, UserPermission::ANY) else {
         return AuthToken::failure_response();
     };
 

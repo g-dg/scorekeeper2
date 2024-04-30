@@ -25,10 +25,10 @@ impl AuthToken {
 
     /// Helper method to authorize and get the user for the extracted token.
     /// Returns None if authorization failed.
-    pub fn authorize(&self, state: &AppState, required_permissions: i64) -> Option<DbUser> {
+    pub fn authorize(&self, state: &AppState, allowed_permissions: i64) -> Option<DbUser> {
         state
             .auth_service
-            .authorize(&self.token, required_permissions)
+            .authorize(&self.token, allowed_permissions)
     }
 
     /// Helper method to invalidate the extracted API token

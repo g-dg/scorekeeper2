@@ -99,7 +99,7 @@ impl AuthService {
     }
 
     /// Checks if the user for the provided token is authorized based on required permissions
-    pub fn authorize(&self, token: &str, required_permissions: i64) -> Option<DbUser> {
+    pub fn authorize(&self, token: &str, allowed_permissions: i64) -> Option<DbUser> {
         let now = Utc::now();
 
         let db = self.db.get();
@@ -189,11 +189,11 @@ impl AuthService {
         }
 
         // check that the user has an allowed role
-        if Self::check_permissions(user.permissions, required_permissions) {
+        if !Self::check_permissions(user.permissions, allowed_permissions) {
             self.audit_service.log_data(
                 Some(user.id),
                 "authorize_failed",
-                json!({"reason": "invalid_role", "required": required_permissions, "actual": user.permissions}),
+                json!({"reason": "invalid_role", "required": allowed_permissions, "actual": user.permissions}),
             );
             return None;
         }
@@ -268,8 +268,8 @@ impl AuthService {
         session.map(|session| session.user_id)
     }
 
-    pub fn check_permissions(user_permissions: i64, required_permissions: i64) -> bool {
-        (required_permissions & user_permissions) != required_permissions
+    pub fn check_permissions(user_permissions: i64, allowed_permissions: i64) -> bool {
+        (allowed_permissions & (user_permissions | i64::MIN)) != 0
     }
 
     pub fn hash_password(password: &str) -> String {

@@ -43,7 +43,7 @@ pub async fn login(
         .authenticate(&request.username, &request.password);
 
     if let Some(token) = result {
-        let Some(user) = state.auth_service.authorize(&token, UserPermission::NONE) else {
+        let Some(user) = state.auth_service.authorize(&token, UserPermission::ANY) else {
             return AuthToken::failure_response();
         };
 
@@ -62,7 +62,7 @@ pub async fn get_current_user(
     State(state): State<Arc<AppState>>,
     token: AuthToken,
 ) -> impl IntoResponse {
-    let Some(current_user) = token.authorize(&state, UserPermission::NONE) else {
+    let Some(current_user) = token.authorize(&state, UserPermission::ANY) else {
         return AuthToken::failure_response();
     };
 
