@@ -37,4 +37,26 @@ export class ScoresClient {
   static async deleteScore(id: string): Promise<void> {
     await api(`scores/${encodeURIComponent(id)}`, "DELETE");
   }
+
+  static async getScoresForGroup(
+    groupParticipationId: string,
+    competitionEventId: string
+  ): Promise<Score[]> {
+    const response = await api(
+      `scores/group/${groupParticipationId}/${competitionEventId}`,
+      "GET"
+    );
+    return response as Score[];
+  }
+
+  static async getScoresForTeam(
+    teamId: string,
+    competitionEventId: string
+  ): Promise<Score[]> {
+    const response = await api(
+      `scores/team/${teamId}/${competitionEventId}`,
+      "GET"
+    );
+    return response as Score[];
+  }
 }

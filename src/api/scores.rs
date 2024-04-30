@@ -23,6 +23,14 @@ pub fn route() -> Router<Arc<AppState>> {
         .route("/:id", get(get_score))
         .route("/:id", put(update_score))
         .route("/:id", delete(delete_score))
+        .route(
+            "/group/:group_participation_id/:competition_event_id",
+            get(list_scores_for_group),
+        )
+        .route(
+            "/team/:team_id/:competition_event_id",
+            get(list_scores_for_team),
+        )
 }
 
 pub async fn list_scores(
@@ -140,4 +148,42 @@ pub async fn delete_score(
         Ok(_) => StatusCode::NO_CONTENT.into_response(),
         Err(err) => err.to_status_code().into_response(),
     }
+}
+
+pub async fn list_scores_for_group(
+    State(state): State<Arc<AppState>>,
+    Path((group_participation_id, competition_event_id)): Path<(Uuid, Uuid)>,
+    token: AuthToken,
+) -> impl IntoResponse {
+    let Some(_current_user) = token.authorize(
+        &state,
+        UserPermission::SCORE_VIEW | UserPermission::SCORE_ENTRY,
+    ) else {
+        return AuthToken::failure_response();
+    };
+
+    let result = state
+        .scores_service
+        .get_for_competition_event_group(competition_event_id, group_participation_id);
+
+    Json(result).into_response()
+}
+
+pub async fn list_scores_for_team(
+    State(state): State<Arc<AppState>>,
+    Path((team_id, competition_event_id)): Path<(Uuid, Uuid)>,
+    token: AuthToken,
+) -> impl IntoResponse {
+    let Some(_current_user) = token.authorize(
+        &state,
+        UserPermission::SCORE_VIEW | UserPermission::SCORE_ENTRY,
+    ) else {
+        return AuthToken::failure_response();
+    };
+
+    let result = state
+        .scores_service
+        .get_for_competition_event_team(competition_event_id, team_id);
+
+    Json(result).into_response()
 }
