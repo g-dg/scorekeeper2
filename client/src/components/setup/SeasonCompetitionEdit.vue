@@ -61,6 +61,15 @@ const selfLoading = ref(0);
 const loading = computed(() => props.loading + selfLoading.value);
 
 async function create() {
+  if (seasonCompetition.value.season_id == null) {
+    alert("Season is required");
+    return;
+  }
+
+  if (seasonCompetition.value.competition_id == null) {
+    alert("Competition is required");
+  }
+
   selfLoading.value++;
   try {
     await SeasonCompetitionsClient.createSeasonCompetition(
@@ -77,6 +86,15 @@ async function create() {
 }
 
 async function update() {
+  if (seasonCompetition.value.season_id == null) {
+    alert("Season is required");
+    return;
+  }
+
+  if (seasonCompetition.value.competition_id == null) {
+    alert("Competition is required");
+  }
+
   selfLoading.value++;
   try {
     await SeasonCompetitionsClient.updateSeasonCompetition(

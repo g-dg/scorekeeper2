@@ -54,6 +54,16 @@ const selfLoading = ref(0);
 const loading = computed(() => props.loading + selfLoading.value);
 
 async function create() {
+  if (groupParticipation.value.season_id == null) {
+    alert("Season is required");
+    return;
+  }
+
+  if (groupParticipation.value.group_id == null) {
+    alert("Group is required");
+    return;
+  }
+
   if (
     groupParticipation.value.season_id == "" ||
     groupParticipation.value.group_id == ""
@@ -78,6 +88,16 @@ async function create() {
 }
 
 async function update() {
+  if (groupParticipation.value.season_id == null) {
+    alert("Season is required");
+    return;
+  }
+
+  if (groupParticipation.value.group_id == null) {
+    alert("Group is required");
+    return;
+  }
+
   if (
     groupParticipation.value.season_id == "" ||
     groupParticipation.value.group_id == ""

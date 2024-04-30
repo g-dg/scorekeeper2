@@ -44,6 +44,11 @@ const selfLoading = ref(0);
 const loading = computed(() => props.loading + selfLoading.value);
 
 async function create() {
+  if (event.value.competition_id == null) {
+    alert("Competition is required");
+    return;
+  }
+
   selfLoading.value++;
   try {
     await EventsClient.createEvent(event.value);
@@ -58,6 +63,11 @@ async function create() {
 }
 
 async function update() {
+  if (event.value.competition_id == null) {
+    alert("Competition is required");
+    return;
+  }
+
   selfLoading.value++;
   try {
     await EventsClient.updateEvent(event.value.id!, event.value);

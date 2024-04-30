@@ -66,6 +66,17 @@ watch(
 );
 onMounted(() => (competitionEvent.value = clone(props.competitionEvent)));
 
+// prevent events from different competitions from showing up
+const events = computed(() =>
+  props.events.filter(
+    (event) =>
+      event.competition_id ==
+      props.seasonCompetitionMap.get(
+        competitionEvent.value.season_competition_id
+      )?.competition_id
+  )
+);
+
 const emit = defineEmits<{
   (e: "update"): void;
 }>();
@@ -74,6 +85,18 @@ const selfLoading = ref(0);
 const loading = computed(() => props.loading + selfLoading.value);
 
 async function create() {
+  if (competitionEvent.value.season_competition_id == null) {
+    alert("Season Competition is required");
+    return;
+  }
+
+  if (
+    !events.value.some((event) => event.id == competitionEvent.value.event_id)
+  ) {
+    alert("Event is required");
+    return;
+  }
+
   selfLoading.value++;
   try {
     await CompetitionEventsClient.createCompetitionEvent(
@@ -90,6 +113,18 @@ async function create() {
 }
 
 async function update() {
+  if (competitionEvent.value.season_competition_id == null) {
+    alert("Season Competition is required");
+    return;
+  }
+
+  if (
+    !events.value.some((event) => event.id == competitionEvent.value.event_id)
+  ) {
+    alert("Event is required");
+    return;
+  }
+
   selfLoading.value++;
   try {
     await CompetitionEventsClient.updateCompetitionEvent(
@@ -150,7 +185,7 @@ async function remove() {
     </select>
 
     <label> Event: </label>
-    <select v-model="competitionEvent.event_id">
+    <select v-model="competitionEvent.event_id" :disabled="events.length == 0">
       <option value=""></option>
       <option v-for="event in events" :key="event.id ?? ''" :value="event.id">
         {{ event.name }}

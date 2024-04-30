@@ -58,6 +58,11 @@ const selfLoading = ref(0);
 const loading = computed(() => props.loading + selfLoading.value);
 
 async function create() {
+  if (team.value.group_participation_id == null) {
+    alert("Group Participation is required");
+    return;
+  }
+
   selfLoading.value++;
   try {
     await TeamsClient.createTeam(team.value);
@@ -72,6 +77,11 @@ async function create() {
 }
 
 async function update() {
+  if (team.value.group_participation_id == null) {
+    alert("Group Participation is required");
+    return;
+  }
+
   selfLoading.value++;
   try {
     await TeamsClient.updateTeam(team.value.id!, team.value);

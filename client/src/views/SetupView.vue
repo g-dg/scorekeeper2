@@ -224,7 +224,17 @@ watch(seasonCompetitionsFiltered, () => {
 
 const events = ref<Event[]>([]);
 const eventsSorted = computed(() =>
-  events.value.slice().sort((a, b) => natcasecmp([a.name, b.name]))
+  events.value
+    .slice()
+    .sort((a, b) =>
+      natcasecmp(
+        [
+          competitionsById.value.get(a.competition_id)?.name ?? "",
+          competitionsById.value.get(b.competition_id)?.name ?? "",
+        ],
+        [a.name, b.name]
+      )
+    )
 );
 const eventsFiltered = computed(() =>
   eventsSorted.value.filter(
@@ -536,7 +546,7 @@ function setVisibility(visibility: boolean) {
 }
 
 const showCreateForms = ref(true);
-const showHeadings = ref(false);
+const showNames = ref(false);
 </script>
 
 <template>
@@ -551,8 +561,8 @@ const showHeadings = ref(false);
     <label> Show Create Forms:</label>
     <input v-model="showCreateForms" type="checkbox" />
 
-    <label> Show Headings:</label>
-    <input v-model="showHeadings" type="checkbox" />
+    <label> Show Names:</label>
+    <input v-model="showNames" type="checkbox" />
 
     <br />
 
@@ -709,7 +719,7 @@ const showHeadings = ref(false);
         v-for="scoreCalculator in scoreCalculatorsFilteredSelf"
         :key="scoreCalculator.id ?? ''"
       >
-        <h2 v-if="showHeadings">{{ scoreCalculator.name }}</h2>
+        <h2 v-if="showNames">{{ scoreCalculator.name }}</h2>
         <ScoreCalculatorEdit
           :score-calculator="scoreCalculator"
           @update="loadScoreCalculators"
@@ -730,7 +740,7 @@ const showHeadings = ref(false);
         />
       </template>
       <template v-for="season in seasonsFilteredSelf" :key="season.id ?? ''">
-        <h2 v-if="showHeadings">{{ season.name }}</h2>
+        <h2 v-if="showNames">{{ season.name }}</h2>
         <SeasonEdit
           :season="season"
           :score-calculators="scoreCalculatorsFilteredSelf"
@@ -752,7 +762,7 @@ const showHeadings = ref(false);
         v-for="competition in competitionsFilteredSelf"
         :key="competition.id ?? ''"
       >
-        <h2 v-if="showHeadings">
+        <h2 v-if="showNames">
           {{ competition.name }}
         </h2>
         <CompetitionEdit
@@ -782,7 +792,7 @@ const showHeadings = ref(false);
         v-for="seasonCompetition in seasonCompetitionsFilteredSelf"
         :key="seasonCompetition.id ?? ''"
       >
-        <h2 v-if="showHeadings">
+        <h2 v-if="showNames">
           {{ seasonsById.get(seasonCompetition.season_id)?.name }} -
           {{ competitionsById.get(seasonCompetition.competition_id)?.name }}
         </h2>
@@ -809,7 +819,7 @@ const showHeadings = ref(false);
         />
       </template>
       <template v-for="event in eventsFilteredSelf" :key="event.id ?? ''">
-        <h2 v-if="showHeadings">{{ event.name }}</h2>
+        <h2 v-if="showNames">{{ event.name }}</h2>
         <EventEdit
           :event="event"
           :competitions="competitionsFilteredSelf"
@@ -841,7 +851,7 @@ const showHeadings = ref(false);
         v-for="competitionEvent in competitionEventsFilteredSelf"
         :key="competitionEvent.id ?? ''"
       >
-        <h2 v-if="showHeadings">
+        <h2 v-if="showNames">
           {{
             seasonsById.get(
               seasonCompetitionsById.get(competitionEvent.season_competition_id)
@@ -881,7 +891,7 @@ const showHeadings = ref(false);
         <GroupEdit @update="loadGroups" />
       </template>
       <template v-for="group in groupsFilteredSelf" :key="group.id ?? ''">
-        <h2 v-if="showHeadings">{{ group.name }}</h2>
+        <h2 v-if="showNames">{{ group.name }}</h2>
         <GroupEdit :group="group" @update="loadGroups" />
       </template>
     </template>
@@ -905,7 +915,7 @@ const showHeadings = ref(false);
         v-for="groupParticipation in groupParticipationsFilteredSelf"
         :key="groupParticipation.id ?? ''"
       >
-        <h2 v-if="showHeadings">
+        <h2 v-if="showNames">
           {{ seasonsById.get(groupParticipation.season_id)?.name }} -
           {{ groupsById.get(groupParticipation.group_id)?.name }}
         </h2>
@@ -934,7 +944,7 @@ const showHeadings = ref(false);
         />
       </template>
       <template v-for="team in teamsFilteredSelf" :key="team.id ?? ''">
-        <h2 v-if="showHeadings">
+        <h2 v-if="showNames">
           {{
             seasonsById.get(
               groupParticipationsById.get(team.group_participation_id)
