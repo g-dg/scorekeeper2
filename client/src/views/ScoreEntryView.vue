@@ -24,6 +24,7 @@ import {
 import { SeasonsClient, type Season } from "@/api/seasons";
 import { TeamsClient, type Team } from "@/api/teams";
 import clone from "@/helpers/clone";
+import { natcasecmp } from "@/helpers/sort";
 import { computed, onMounted, ref, watch } from "vue";
 
 const DEFAULT_SCORE_FIELDS: Record<string, ScoreFieldType> = {
@@ -236,7 +237,11 @@ const teamsById = computed(
 
 //#region Filtering
 
-const seasons = computed(() => allSeasons.value.filter((season) => true));
+const seasons = computed(() =>
+  allSeasons.value
+    .filter((season) => true)
+    .sort((a, b) => natcasecmp([a.name, b.name]))
+);
 const selectedSeasonId = ref<string | null>(null);
 watch(seasons, () => {
   if (!seasons.value.some((season) => selectedSeasonId.value == season.id)) {
@@ -245,9 +250,17 @@ watch(seasons, () => {
 });
 
 const seasonCompetitions = computed(() =>
-  allSeasonCompetitions.value.filter(
-    (seasonCompetition) => seasonCompetition.season_id == selectedSeasonId.value
-  )
+  allSeasonCompetitions.value
+    .filter(
+      (seasonCompetition) =>
+        seasonCompetition.season_id == selectedSeasonId.value
+    )
+    .sort((a, b) =>
+      natcasecmp([
+        competitionsById.value.get(a.competition_id)!.name,
+        competitionsById.value.get(b.competition_id)!.name,
+      ])
+    )
 );
 const selectedSeasonCompetitionId = ref<string | null>(null);
 watch(seasonCompetitions, () => {
@@ -262,11 +275,18 @@ watch(seasonCompetitions, () => {
 });
 
 const competitionEvents = computed(() =>
-  allCompetitionEvents.value.filter(
-    (competitionEvent) =>
-      competitionEvent.season_competition_id ==
-      selectedSeasonCompetitionId.value
-  )
+  allCompetitionEvents.value
+    .filter(
+      (competitionEvent) =>
+        competitionEvent.season_competition_id ==
+        selectedSeasonCompetitionId.value
+    )
+    .sort((a, b) =>
+      natcasecmp([
+        eventsById.value.get(a.event_id)!.name,
+        eventsById.value.get(b.event_id)!.name,
+      ])
+    )
 );
 const selectedCompetitionEventId = ref<string | null>(null);
 watch(competitionEvents, () => {
@@ -281,10 +301,17 @@ watch(competitionEvents, () => {
 });
 
 const groupParticipations = computed(() =>
-  allGroupParticipations.value.filter(
-    (groupParticipation) =>
-      groupParticipation.season_id == selectedSeasonId.value
-  )
+  allGroupParticipations.value
+    .filter(
+      (groupParticipation) =>
+        groupParticipation.season_id == selectedSeasonId.value
+    )
+    .sort((a, b) =>
+      natcasecmp([
+        groupsById.value.get(a.group_id)!.name,
+        groupsById.value.get(b.group_id)!.name,
+      ])
+    )
 );
 const selectedGroupParticipationId = ref<string | null>(null);
 watch(groupParticipations, () => {
@@ -299,9 +326,12 @@ watch(groupParticipations, () => {
 });
 
 const teams = computed(() =>
-  allTeams.value.filter(
-    (team) => team.group_participation_id == selectedGroupParticipationId.value
-  )
+  allTeams.value
+    .filter(
+      (team) =>
+        team.group_participation_id == selectedGroupParticipationId.value
+    )
+    .sort((a, b) => natcasecmp([a.name, b.name]))
 );
 const selectedTeamId = ref<string | null>(null);
 watch(teams, () => {
