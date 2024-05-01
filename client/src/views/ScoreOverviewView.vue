@@ -473,16 +473,18 @@ function getTeamScores(competitionEventId: string, teamId: string): Score[] {
                 'has-score': competitionEvent.score_type == 'Group' && getGroupScores(competitionEvent.id!, groupParticipation.id!).length > 0
               }"
             >
-              <template v-if="showScoreData">
-                <ScoreData
-                  :scores="getGroupScores(competitionEvent.id!, groupParticipation.id!)"
-                />
-              </template>
-              <template v-else>
-                {{
-                  getGroupScores(competitionEvent.id!, groupParticipation.id!)
-                    .length
-                }}
+              <template v-if="competitionEvent.score_type == 'Group'">
+                <template v-if="showScoreData">
+                  <ScoreData
+                    :scores="getGroupScores(competitionEvent.id!, groupParticipation.id!)"
+                  />
+                </template>
+                <template v-else>
+                  {{
+                    getGroupScores(competitionEvent.id!, groupParticipation.id!)
+                      .length
+                  }}
+                </template>
               </template>
             </td>
           </tr>
@@ -511,13 +513,15 @@ function getTeamScores(competitionEventId: string, teamId: string): Score[] {
                 'has-score': competitionEvent.score_type == 'Team' && getTeamScores(competitionEvent.id!, team.id!).length > 0
               }"
             >
-              <template v-if="showScoreData">
-                <ScoreData
-                  :scores="getTeamScores(competitionEvent.id!, team.id!)"
-                />
-              </template>
-              <template v-else>
-                {{ getTeamScores(competitionEvent.id!, team.id!).length }}
+              <template v-if="competitionEvent.score_type == 'Team'">
+                <template v-if="showScoreData">
+                  <ScoreData
+                    :scores="getTeamScores(competitionEvent.id!, team.id!)"
+                  />
+                </template>
+                <template v-else>
+                  {{ getTeamScores(competitionEvent.id!, team.id!).length }}
+                </template>
               </template>
             </td>
           </tr>
