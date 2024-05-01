@@ -61,6 +61,11 @@ const router = createRouter({
       path: "/score_entry",
       component: () => import("@/views/ScoreEntryView.vue"),
     },
+    {
+      name: "score_overview",
+      path: "/score_overview",
+      component: () => import("@/views/ScoreOverviewView.vue"),
+    },
   ],
 });
 

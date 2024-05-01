@@ -17,25 +17,30 @@ const clientVersion = __APP_VERSION__;
       <nav v-if="isAuthenticated">
         <ul>
           <li>
-            <RouterLink :to="{ name: 'home' }">Home</RouterLink>
+            <RouterLink :to="{ name: 'home' }"> Home </RouterLink>
           </li>
           <li v-if="user?.permission_enter_scores">
-            <RouterLink :to="{ name: 'score_entry' }">Score Entry</RouterLink>
+            <RouterLink :to="{ name: 'score_entry' }"> Score Entry </RouterLink>
+          </li>
+          <li v-if="user?.permission_view_scores">
+            <RouterLink :to="{ name: 'score_overview' }">
+              Score Overview
+            </RouterLink>
           </li>
           <li v-if="user?.permission_setup_admin">
-            <RouterLink :to="{ name: 'setup' }">Setup</RouterLink>
+            <RouterLink :to="{ name: 'setup' }"> Setup </RouterLink>
           </li>
           <li v-if="user?.permission_user_admin">
-            <RouterLink :to="{ name: 'user_list' }">Users</RouterLink>
+            <RouterLink :to="{ name: 'user_list' }"> Users </RouterLink>
           </li>
           <li v-if="user?.permission_modify_self">
-            <RouterLink :to="{ name: 'account' }">Account</RouterLink>
+            <RouterLink :to="{ name: 'account' }"> Account </RouterLink>
           </li>
           <li>
-            <RouterLink :to="{ name: 'about' }">About</RouterLink>
+            <RouterLink :to="{ name: 'about' }"> About </RouterLink>
           </li>
           <li>
-            <RouterLink :to="{ name: 'logout' }">Logout</RouterLink>
+            <RouterLink :to="{ name: 'logout' }"> Logout </RouterLink>
           </li>
         </ul>
       </nav>
