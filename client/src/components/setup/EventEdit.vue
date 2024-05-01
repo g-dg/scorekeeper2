@@ -44,7 +44,7 @@ const selfLoading = ref(0);
 const loading = computed(() => props.loading + selfLoading.value);
 
 function validate() {
-  if (event.value.competition_id ?? "" == "") {
+  if ((event.value.competition_id ?? "") == "") {
     alert("Competition is required");
     return false;
   }

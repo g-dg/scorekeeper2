@@ -55,7 +55,7 @@ function validate() {
     return false;
   }
 
-  if (scoreCalculator.value.score_fields ?? "" != "") {
+  if ((scoreCalculator.value.score_fields ?? "") != "") {
     try {
       const config = JSON.parse(scoreCalculator.value.score_fields!);
       if (typeof config != "object" || Array.isArray(config)) throw new Error();

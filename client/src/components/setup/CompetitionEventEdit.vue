@@ -85,7 +85,7 @@ const selfLoading = ref(0);
 const loading = computed(() => props.loading + selfLoading.value);
 
 function validate() {
-  if (competitionEvent.value.season_competition_id ?? "" == "") {
+  if ((competitionEvent.value.season_competition_id ?? "") == "") {
     alert("Season Competition is required");
     return false;
   }

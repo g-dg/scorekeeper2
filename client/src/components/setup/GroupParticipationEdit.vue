@@ -54,12 +54,12 @@ const selfLoading = ref(0);
 const loading = computed(() => props.loading + selfLoading.value);
 
 function validate() {
-  if (groupParticipation.value.season_id ?? "" == "") {
+  if ((groupParticipation.value.season_id ?? "") == "") {
     alert("Season is required");
     return false;
   }
 
-  if (groupParticipation.value.group_id ?? "" == "") {
+  if ((groupParticipation.value.group_id ?? "") == "") {
     alert("Group is required");
     return false;
   }

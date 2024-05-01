@@ -58,7 +58,7 @@ const selfLoading = ref(0);
 const loading = computed(() => props.loading + selfLoading.value);
 
 function validate() {
-  if (team.value.group_participation_id ?? "" == "") {
+  if ((team.value.group_participation_id ?? "") == "") {
     alert("Group Participation is required");
     return false;
   }

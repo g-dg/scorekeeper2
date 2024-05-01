@@ -61,12 +61,12 @@ const selfLoading = ref(0);
 const loading = computed(() => props.loading + selfLoading.value);
 
 function validate() {
-  if (seasonCompetition.value.season_id ?? "" == "") {
+  if ((seasonCompetition.value.season_id ?? "") == "") {
     alert("Season is required");
     return false;
   }
 
-  if (seasonCompetition.value.competition_id ?? "" == "") {
+  if ((seasonCompetition.value.competition_id ?? "") == "") {
     alert("Competition is required");
     return false;
   }
