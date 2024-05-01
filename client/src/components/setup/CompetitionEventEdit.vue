@@ -99,7 +99,7 @@ function validate() {
 
   try {
     const config = JSON.parse(competitionEvent.value.calculator_config);
-    if (typeof config == "object" && !Array.isArray(config)) throw new Error();
+    if (typeof config != "object" || Array.isArray(config)) throw new Error();
     competitionEvent.value.calculator_config = JSON.stringify(config);
   } catch {
     alert("Calculator config must be a valid JSON object");
