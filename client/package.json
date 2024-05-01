@@ -26,7 +26,7 @@
     "@vue/tsconfig": "^0.5",
     "jsdom": "^24.0",
     "npm-run-all2": "^6.1",
-    "sass": "^1.75",
+    "sass": "^1.76",
     "typescript": "~5.4",
     "vite": "^5.2",
     "vitest": "^1.5",
