@@ -45,7 +45,35 @@ const emit = defineEmits<{
 const selfLoading = ref(0);
 const loading = computed(() => props.loading + selfLoading.value);
 
+function validate() {
+  try {
+    const config = JSON.parse(scoreCalculator.value.default_config);
+    if (typeof config != "object" || Array.isArray(config)) throw new Error();
+    scoreCalculator.value.default_config = JSON.stringify(config);
+  } catch {
+    alert("Default config must be a valid JSON object");
+    return false;
+  }
+
+  if (scoreCalculator.value.score_fields ?? "" != "") {
+    try {
+      const config = JSON.parse(scoreCalculator.value.score_fields!);
+      if (typeof config != "object" || Array.isArray(config)) throw new Error();
+      scoreCalculator.value.score_fields = JSON.stringify(config);
+    } catch {
+      alert("Score fields must be a valid JSON object");
+      return false;
+    }
+  } else {
+    scoreCalculator.value.score_fields = null;
+  }
+
+  return true;
+}
+
 async function create() {
+  if (!validate()) return;
+
   selfLoading.value++;
   try {
     await ScoreCalculatorsClient.createScoreCalculator(scoreCalculator.value);
@@ -60,6 +88,8 @@ async function create() {
 }
 
 async function update() {
+  if (!validate()) return;
+
   selfLoading.value++;
   try {
     await ScoreCalculatorsClient.updateScoreCalculator(

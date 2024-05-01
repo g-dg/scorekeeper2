@@ -57,11 +57,17 @@ const emit = defineEmits<{
 const selfLoading = ref(0);
 const loading = computed(() => props.loading + selfLoading.value);
 
-async function create() {
-  if (team.value.group_participation_id == null) {
+function validate() {
+  if (team.value.group_participation_id ?? "" == "") {
     alert("Group Participation is required");
-    return;
+    return false;
   }
+
+  return true;
+}
+
+async function create() {
+  if (!validate()) return;
 
   selfLoading.value++;
   try {
@@ -77,10 +83,7 @@ async function create() {
 }
 
 async function update() {
-  if (team.value.group_participation_id == null) {
-    alert("Group Participation is required");
-    return;
-  }
+  if (!validate()) return;
 
   selfLoading.value++;
   try {

@@ -60,15 +60,31 @@ const emit = defineEmits<{
 const selfLoading = ref(0);
 const loading = computed(() => props.loading + selfLoading.value);
 
-async function create() {
-  if (seasonCompetition.value.season_id == null) {
+function validate() {
+  if (seasonCompetition.value.season_id ?? "" == "") {
     alert("Season is required");
-    return;
+    return false;
   }
 
-  if (seasonCompetition.value.competition_id == null) {
+  if (seasonCompetition.value.competition_id ?? "" == "") {
     alert("Competition is required");
+    return false;
   }
+
+  try {
+    const config = JSON.parse(seasonCompetition.value.calculator_config);
+    if (typeof config != "object" || Array.isArray(config)) throw new Error();
+    seasonCompetition.value.calculator_config = JSON.stringify(config);
+  } catch {
+    alert("Calculator config must be a valid JSON object");
+    return false;
+  }
+
+  return true;
+}
+
+async function create() {
+  if (!validate()) return;
 
   selfLoading.value++;
   try {
@@ -86,14 +102,7 @@ async function create() {
 }
 
 async function update() {
-  if (seasonCompetition.value.season_id == null) {
-    alert("Season is required");
-    return;
-  }
-
-  if (seasonCompetition.value.competition_id == null) {
-    alert("Competition is required");
-  }
+  if (!validate()) return;
 
   selfLoading.value++;
   try {

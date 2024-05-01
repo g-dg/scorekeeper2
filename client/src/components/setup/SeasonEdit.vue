@@ -44,7 +44,22 @@ const emit = defineEmits<{
 const selfLoading = ref(0);
 const loading = computed(() => props.loading + selfLoading.value);
 
+function validate() {
+  try {
+    const config = JSON.parse(season.value.calculator_config);
+    if (typeof config != "object" || Array.isArray(config)) throw new Error();
+    season.value.calculator_config = JSON.stringify(config);
+  } catch {
+    alert("Calculator config must be a valid JSON object");
+    return false;
+  }
+
+  return true;
+}
+
 async function create() {
+  if (!validate()) return;
+
   selfLoading.value++;
   try {
     await SeasonsClient.createSeason(season.value);
@@ -59,6 +74,8 @@ async function create() {
 }
 
 async function update() {
+  if (!validate()) return;
+
   selfLoading.value++;
   try {
     await SeasonsClient.updateSeason(season.value.id!, season.value);

@@ -53,15 +53,15 @@ const emit = defineEmits<{
 const selfLoading = ref(0);
 const loading = computed(() => props.loading + selfLoading.value);
 
-async function create() {
-  if (groupParticipation.value.season_id == null) {
+function validate() {
+  if (groupParticipation.value.season_id ?? "" == "") {
     alert("Season is required");
-    return;
+    return false;
   }
 
-  if (groupParticipation.value.group_id == null) {
+  if (groupParticipation.value.group_id ?? "" == "") {
     alert("Group is required");
-    return;
+    return false;
   }
 
   if (
@@ -69,8 +69,14 @@ async function create() {
     groupParticipation.value.group_id == ""
   ) {
     alert("Season and Group are required");
-    return;
+    return false;
   }
+
+  return true;
+}
+
+async function create() {
+  if (!validate()) return;
 
   selfLoading.value++;
   try {
@@ -88,23 +94,7 @@ async function create() {
 }
 
 async function update() {
-  if (groupParticipation.value.season_id == null) {
-    alert("Season is required");
-    return;
-  }
-
-  if (groupParticipation.value.group_id == null) {
-    alert("Group is required");
-    return;
-  }
-
-  if (
-    groupParticipation.value.season_id == "" ||
-    groupParticipation.value.group_id == ""
-  ) {
-    alert("Season and Group are required");
-    return;
-  }
+  if (!validate()) return;
 
   selfLoading.value++;
   try {

@@ -37,7 +37,13 @@ const emit = defineEmits<{
 const selfLoading = ref(0);
 const loading = computed(() => props.loading + selfLoading.value);
 
+function validate() {
+  return true;
+}
+
 async function create() {
+  if (!validate()) return;
+
   selfLoading.value++;
   try {
     await GroupsClient.createGroup(group.value);
@@ -52,6 +58,8 @@ async function create() {
 }
 
 async function update() {
+  if (!validate()) return;
+
   selfLoading.value++;
   try {
     await GroupsClient.updateGroup(group.value.id!, group.value);

@@ -43,11 +43,17 @@ const emit = defineEmits<{
 const selfLoading = ref(0);
 const loading = computed(() => props.loading + selfLoading.value);
 
-async function create() {
-  if (event.value.competition_id == null) {
+function validate() {
+  if (event.value.competition_id ?? "" == "") {
     alert("Competition is required");
-    return;
+    return false;
   }
+
+  return true;
+}
+
+async function create() {
+  if (!validate()) return;
 
   selfLoading.value++;
   try {
@@ -63,10 +69,7 @@ async function create() {
 }
 
 async function update() {
-  if (event.value.competition_id == null) {
-    alert("Competition is required");
-    return;
-  }
+  if (!validate()) return;
 
   selfLoading.value++;
   try {
