@@ -126,8 +126,8 @@ impl ScoresService {
         let id = Uuid::new_v4();
 
         let query = match score.score_type {
-            ScoreType::Group => "INSERT INTO \"group_scores\" (\"id\", \"competition_event_id\", \"group_participation_id\", \"score_data\", \"timestamp\", \"valid\", \"disqualified\", \"notes\") VALUES (:id, :competition_event_id, :group_participation_id, :score_data, :timestamp, :valid, :disqualified, :notes);",
-            ScoreType::Team => "INSERT INTO \"team_scores\" (\"id\", \"competition_event_id\", \"team_id\", \"score_data\", \"timestamp\", \"valid\", \"disqualified\", \"notes\") VALUES (:id, :competition_event_id, :team_id, :score_data, :timestamp, :valid, :disqualified, :notes);",
+            ScoreType::Group => "INSERT INTO \"group_scores\" (\"id\", \"competition_event_id\", \"group_participation_id\", \"score_data\", \"timestamp\", \"valid\", \"disqualified\", \"notes\") VALUES (:id, :competition_event_id, :subject_id, :score_data, :timestamp, :valid, :disqualified, :notes);",
+            ScoreType::Team => "INSERT INTO \"team_scores\" (\"id\", \"competition_event_id\", \"team_id\", \"score_data\", \"timestamp\", \"valid\", \"disqualified\", \"notes\") VALUES (:id, :competition_event_id, :subject_id, :score_data, :timestamp, :valid, :disqualified, :notes);",
         };
 
         let db = self.db.get();
@@ -137,8 +137,7 @@ impl ScoresService {
             .execute(named_params! {
                 ":id": id,
                 ":competition_event_id": score.competition_event_id,
-                ":group_participation_id": score.subject_id, // only used for group scores
-                ":team_id": score.subject_id, // only used for team scores
+                ":subject_id": score.subject_id,
                 ":score_data": score.score_data,
                 ":timestamp": score.timestamp,
                 ":valid": score.valid,
@@ -160,8 +159,8 @@ impl ScoresService {
         };
 
         let query = match score.score_type {
-            ScoreType::Group => "UPDATE \"group_scores\" SET \"competition_event_id\" = :competition_event_id, \"group_participation_id\" = :group_participation_id, \"score_data\" = :score_data, \"timestamp\" = :timestamp, \"valid\" = :valid, \"disqualified\" = :disqualified, \"notes\" = :notes WHERE \"id\" = :id;",
-            ScoreType::Team => "UPDATE \"team_scores\" SET \"competition_event_id\" = :competition_event_id, \"team_id\" = :team_id, \"score_data\" = :score_data, \"timestamp\" = :timestamp, \"valid\" = :valid, \"disqualified\" = :disqualified, \"notes\" = :notes WHERE \"id\" = :id;",
+            ScoreType::Group => "UPDATE \"group_scores\" SET \"competition_event_id\" = :competition_event_id, \"group_participation_id\" = :subject_id, \"score_data\" = :score_data, \"timestamp\" = :timestamp, \"valid\" = :valid, \"disqualified\" = :disqualified, \"notes\" = :notes WHERE \"id\" = :id;",
+            ScoreType::Team => "UPDATE \"team_scores\" SET \"competition_event_id\" = :competition_event_id, \"team_id\" = :subject_id, \"score_data\" = :score_data, \"timestamp\" = :timestamp, \"valid\" = :valid, \"disqualified\" = :disqualified, \"notes\" = :notes WHERE \"id\" = :id;",
         };
 
         let db = self.db.get();
@@ -171,8 +170,7 @@ impl ScoresService {
             .execute(named_params! {
                 ":id": score.id,
                 ":competition_event_id": score.competition_event_id,
-                ":group_participation_id": score.subject_id, // only used for group scores
-                ":team_id": score.subject_id, // only used for team scores
+                ":subject_id": score.subject_id,
                 ":score_data": score.score_data,
                 ":timestamp": score.timestamp,
                 ":valid": score.valid,
