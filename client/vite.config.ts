@@ -20,8 +20,8 @@ export default defineConfig({
       output: {
         compact: true,
         chunkFileNames: "assets/[hash].js",
-        // experimentalMinChunkSize: 65536,
-      }
-    }
-  }
+        experimentalMinChunkSize: 4096,
+      },
+    },
+  },
 });
