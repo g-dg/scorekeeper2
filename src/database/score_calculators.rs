@@ -1,8 +1,9 @@
 use rusqlite::Row;
 use serde::{Deserialize, Serialize};
-use serde_json::Value as JsonValue;
+use serde_json::{json, Value as JsonValue};
 use uuid::Uuid;
 
+#[derive(Serialize, Deserialize)]
 pub enum ScoreFieldType {
     Number,
     Time,
@@ -54,6 +55,20 @@ impl ScoreCalculator {
             score_fields: row
                 .get("score_fields")
                 .expect("Failed to get value from database row"),
+        }
+    }
+
+    pub fn get_default() -> Self {
+        ScoreCalculator {
+            id: None,
+            name: String::new(),
+            description: String::new(),
+            script: String::from(""),
+            default_config: json!({}),
+            supports_seasons: true,
+            supports_competitions: true,
+            supports_events: true,
+            score_fields: Some(json!({"Points": ScoreFieldType::Number})),
         }
     }
 }
