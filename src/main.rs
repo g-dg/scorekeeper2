@@ -1,4 +1,5 @@
 pub mod api;
+pub mod calculator;
 pub mod config;
 pub mod database;
 pub mod helpers;
@@ -12,6 +13,7 @@ use axum::{
     routing::{get, post},
     Router,
 };
+
 use config::AppConfig;
 use helpers::api_request_logging;
 use tokio::{net::TcpListener, signal};
