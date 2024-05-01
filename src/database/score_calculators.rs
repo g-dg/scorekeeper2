@@ -3,6 +3,12 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value as JsonValue;
 use uuid::Uuid;
 
+pub enum ScoreFieldType {
+    Number,
+    Time,
+    Boolean,
+}
+
 #[derive(Clone, Serialize, Deserialize)]
 pub struct ScoreCalculator {
     pub id: Option<Uuid>,

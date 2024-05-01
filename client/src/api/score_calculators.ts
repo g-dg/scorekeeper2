@@ -12,6 +12,8 @@ export interface ScoreCalculator {
   score_fields: string | null;
 }
 
+export type ScoreFieldType = "Number" | "Time" | "Boolean";
+
 export class ScoreCalculatorsClient {
   static async listScoreCalculators(): Promise<ScoreCalculator[]> {
     const response = await api("score_calculators", "GET");
