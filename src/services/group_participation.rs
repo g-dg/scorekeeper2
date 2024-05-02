@@ -11,8 +11,10 @@ pub struct GroupParticipationsService {
 }
 
 impl GroupParticipationsService {
-    pub fn new(database: Database) -> Self {
-        Self { db: database }
+    pub fn new(database: &Database) -> Self {
+        Self {
+            db: database.clone(),
+        }
     }
 
     pub fn get(&self, id: Uuid) -> Option<GroupParticipation> {
@@ -40,7 +42,9 @@ impl GroupParticipationsService {
                 GroupParticipation::COLUMNS_SQL
             ))
             .unwrap()
-            .query_map(named_params! {}, |row| Ok(GroupParticipation::from_row(row)))
+            .query_map(named_params! {}, |row| {
+                Ok(GroupParticipation::from_row(row))
+            })
             .expect("Error occurred getting all group participations from database")
             .map(|x| x.unwrap())
             .collect();

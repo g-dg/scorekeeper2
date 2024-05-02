@@ -75,11 +75,11 @@ impl Database {
             conn.execute_batch(DATABASE_DEFINITION_SQL)
                 .expect("Error occurred while running database initialization commands");
 
-            let audit_service = AuditService::new(db.clone());
+            let audit_service = AuditService::new(&db);
 
             audit_service.log(None, "init");
 
-            let user_service = UsersService::new(db.clone(), config);
+            let user_service = UsersService::new(&db, config);
 
             if user_service
                 .get_user_by_name(&config.default_admin_username)

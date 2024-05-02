@@ -130,13 +130,13 @@ impl ResultsCalculator {
 
         Self {
             lua,
-            score_calculator_service: ScoreCalculatorsService::new(database.clone()),
-            season_service: SeasonsService::new(database.clone()),
-            season_competition_service: SeasonCompetitionsService::new(database.clone()),
-            competition_event_service: CompetitionEventsService::new(database.clone()),
-            group_service: GroupsService::new(database.clone()),
-            group_participation_service: GroupParticipationsService::new(database.clone()),
-            team_service: TeamsService::new(database.clone()),
+            score_calculator_service: ScoreCalculatorsService::new(database),
+            season_service: SeasonsService::new(database),
+            season_competition_service: SeasonCompetitionsService::new(database),
+            competition_event_service: CompetitionEventsService::new(database),
+            group_service: GroupsService::new(database),
+            group_participation_service: GroupParticipationsService::new(database),
+            team_service: TeamsService::new(database),
         }
     }
 

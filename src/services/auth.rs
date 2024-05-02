@@ -30,12 +30,12 @@ pub struct AuthService {
 }
 
 impl AuthService {
-    pub fn new(database: Database, config: &AppConfig) -> Self {
+    pub fn new(database: &Database, config: &AppConfig) -> Self {
         Self {
             config: config.clone(),
-            audit_service: AuditService::new(database.clone()),
-            user_service: UsersService::new(database.clone(), config),
-            db: database,
+            audit_service: AuditService::new(database),
+            user_service: UsersService::new(database, config),
+            db: database.clone(),
         }
     }
 

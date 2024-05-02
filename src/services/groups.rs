@@ -11,8 +11,10 @@ pub struct GroupsService {
 }
 
 impl GroupsService {
-    pub fn new(database: Database) -> Self {
-        Self { db: database }
+    pub fn new(database: &Database) -> Self {
+        Self {
+            db: database.clone(),
+        }
     }
 
     pub fn get(&self, id: Uuid) -> Option<Group> {

@@ -11,8 +11,10 @@ pub struct CompetitionEventsService {
 }
 
 impl CompetitionEventsService {
-    pub fn new(database: Database) -> Self {
-        Self { db: database }
+    pub fn new(database: &Database) -> Self {
+        Self {
+            db: database.clone(),
+        }
     }
 
     pub fn get(&self, id: Uuid) -> Option<CompetitionEvent> {

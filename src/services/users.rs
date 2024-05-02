@@ -58,10 +58,10 @@ pub struct UsersService {
 }
 
 impl UsersService {
-    pub fn new(database: Database, config: &AppConfig) -> Self {
+    pub fn new(database: &Database, config: &AppConfig) -> Self {
         Self {
             config: config.clone(),
-            db: database,
+            db: database.clone(),
         }
     }
 
@@ -222,7 +222,7 @@ impl UsersService {
             })
             .is_ok();
 
-        let auth_service = AuthService::new(self.db.clone(), &self.config);
+        let auth_service = AuthService::new(&self.db, &self.config);
         auth_service.invalidate_sessions(user_id, session_to_keep);
 
         if success {

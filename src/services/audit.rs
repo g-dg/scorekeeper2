@@ -11,8 +11,10 @@ pub struct AuditService {
 }
 
 impl AuditService {
-    pub fn new(db: Database) -> Self {
-        Self { db }
+    pub fn new(database: &Database) -> Self {
+        Self {
+            db: database.clone(),
+        }
     }
 
     pub fn log(&self, user_id: Option<Uuid>, action: &str) -> Uuid {
