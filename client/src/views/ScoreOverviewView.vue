@@ -363,7 +363,7 @@ const filteredTeams = computed(() =>
   )
 );
 
-const showScoreData = ref(false);
+const showScoreData = ref(true);
 
 const scoresBySubjectId = computed(() =>
   allScores.value.reduce((map, score) => {
