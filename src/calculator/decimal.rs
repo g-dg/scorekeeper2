@@ -30,7 +30,10 @@ impl DecimalValue {
                 Value::Table(_) => Err(Error::UserDataTypeMismatch),
                 Value::Function(_) => Err(Error::UserDataTypeMismatch),
                 Value::Thread(_) => Err(Error::UserDataTypeMismatch),
-                Value::UserData(_) => Err(Error::UserDataTypeMismatch),
+                Value::UserData(value) => value
+                    .borrow::<Self>()
+                    .map(|value| *value)
+                    .or(Err(Error::UserDataTypeMismatch)),
                 Value::Error(_) => Err(Error::UserDataTypeMismatch),
             })
             .unwrap();
@@ -41,7 +44,7 @@ impl DecimalValue {
 impl<'lua> FromLua<'lua> for DecimalValue {
     fn from_lua(value: Value<'lua>, _: &'lua Lua) -> Result<Self> {
         match value {
-            Value::UserData(ud) => Ok(*ud.borrow::<Self>()?),
+            Value::UserData(userdata) => Ok(*userdata.borrow::<Self>()?),
             _ => unreachable!(),
         }
     }
