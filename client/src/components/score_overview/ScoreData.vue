@@ -6,16 +6,20 @@ const props = defineProps<{
   scores: Score[];
 }>();
 const scores = computed(() =>
-  props.scores.map((score) => {
-    try {
-      return {
-        disqualified: score.disqualified,
-        data: JSON.parse(score.score_data),
-      };
-    } catch {
-      return null;
-    }
-  })
+  props.scores
+    .sort((a, b) =>
+      a.timestamp == b.timestamp ? 0 : a.timestamp < b.timestamp ? 1 : -1
+    )
+    .map((score) => {
+      try {
+        return {
+          disqualified: score.disqualified,
+          data: JSON.parse(score.score_data),
+        };
+      } catch {
+        return null;
+      }
+    })
 );
 </script>
 
@@ -29,6 +33,6 @@ const scores = computed(() =>
 
 <style lang="scss" scoped>
 .score-data {
-  margin: .5em;
+  margin: 0.5em;
 }
 </style>
